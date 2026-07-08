@@ -1,0 +1,11 @@
+dimensione_html_prima: 64757
+dimensione_html_dopo: 64746
+blocchi_style_duplicati_rimossi: 0
+style_prima: 2
+style_dopo: 2
+script_prima: 3
+script_dopo: 3
+id_duplicati: ['backSpace', 'mi']
+riferimenti_locali_mancanti: []
+index_presente: True
+script_duplicati_rimossi: 0
