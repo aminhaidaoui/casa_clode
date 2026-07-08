@@ -535,7 +535,38 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 #v31Card{position:fixed;z-index:2145;left:50%;top:50%;transform:translate(-50%,-44%) scale(.92);width:min(86vw,470px);padding:24px;border-radius:24px;background:rgba(9,13,35,.8);border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(18px);color:#fff;text-align:center;opacity:0;pointer-events:none;transition:.55s}#v31Card.on{opacity:1;transform:translate(-50%,-50%) scale(1)}#v31Card b{font:clamp(24px,5vw,38px) Georgia,serif}#v31Card p{line-height:1.55;opacity:.86}
 #v31Pill{position:fixed;z-index:2138;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%) translateY(15px);padding:9px 14px;border-radius:999px;background:rgba(8,12,32,.72);color:#fff;border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);font-size:12px;opacity:0;transition:.35s;pointer-events:none}#v31Pill.on{opacity:1;transform:translateX(-50%)}
 @keyframes v31d{to{stroke-dashoffset:0}}@keyframes v31n{to{opacity:1}}
-</style></head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
+</style>
+<style id="v32-memory-progress-style">
+.memory-progress{
+ position:absolute;left:50%;bottom:9.5%;transform:translateX(-50%);
+ z-index:22;padding:8px 13px;border-radius:999px;
+ background:rgba(8,7,18,.58);border:1px solid rgba(255,255,255,.16);
+ color:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(10px);font:500 12px/1.2 system-ui,sans-serif;
+ letter-spacing:.02em;white-space:nowrap;pointer-events:none;
+}
+.secret-star.visited{
+ opacity:.52!important;filter:saturate(.55) brightness(.78)!important;
+}
+.secret-star.visited::before,.secret-star.visited::after{opacity:.32!important}
+.month-heart.july-heart-ready{
+ cursor:pointer!important;pointer-events:auto!important;
+ filter:drop-shadow(0 0 18px rgba(255,190,220,.95)) drop-shadow(0 0 38px rgba(255,160,205,.6))!important;
+ animation:julyReadyV32 1.7s ease-in-out infinite!important;
+}
+@keyframes julyReadyV32{50%{filter:drop-shadow(0 0 28px rgba(255,225,240,1)) drop-shadow(0 0 55px rgba(255,140,195,.85))}}
+.july-call{
+ position:absolute;left:50%;top:67%;transform:translateX(-50%);z-index:24;
+ color:#fff;font:italic 13px Georgia,serif;white-space:nowrap;
+ text-shadow:0 0 12px #000,0 0 20px #000;
+}
+@media(max-width:650px){
+ .memory-progress{bottom:11%;font-size:11px;padding:7px 10px}
+ .july-call{top:70%;font-size:12px}
+}
+</style>
+
+</head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
 <main>
@@ -624,6 +655,7 @@ function openWorld(g,idx){
    <i class="orbit o1"></i><i class="orbit o2"></i><i class="orbit o3"></i><i class="orbit o4"></i><i class="orbit o5"></i>
    <div class="month-heart"><i class="shine"></i><i class="pulse"></i></div>
    <div id="secretStars"></div>
+   <div id="memoryProgress" class="memory-progress" aria-live="polite"></div>
    <button class="easter-star" id="easterStar" aria-label="stella misteriosa"></button>
    <div class="mystery-whisper">scegli una luce. scoprirai solo dopo cosa custodisce ✦</div>
   </div></div>`;
@@ -638,15 +670,19 @@ function openWorld(g,idx){
    const b=document.createElement('button');
    b.className='secret-star';
    b.style.cssText=`--x:${x}%;--y:${y}%;--s:${8+(i%4)*2}px;--d:${1.5+(i%6)*.38}s;animation-delay:${(i%7)*-.31}s`;
+   b.dataset.month=g.name;
+   b.dataset.index=String(i);
+   b.dataset.src=item[0];
    b.setAttribute('aria-label','ricordo misterioso');
+   if(window.CasaNostraMemoryProgress?.hasSeen(g.name,item[0])) b.classList.add('visited');
    b.onclick=()=>{
-     b.classList.add('visited');
      const path=item[0], type=item[1];
      if(type==='video'){
        mediaMount.innerHTML='<video controls playsinline preload="metadata" style="display:block;max-width:100%;max-height:78vh;margin:auto;border-radius:18px"><source src="'+path+'"></video>';
        mc.textContent=g.name+' · un ricordo';
        modal.classList.remove('hidden');
      }else openPhoto(path,g.name+' · un ricordo');
+     window.CasaNostraMemoryProgress?.markSeen(g.name,path,b);
    };
    field.appendChild(b);
  });
@@ -654,6 +690,7 @@ function openWorld(g,idx){
  star.onclick=()=>openMystery('segreto',g,99);
  monthWorld.classList.remove('hidden');
  document.body.style.overflow='hidden';
+ window.CasaNostraMemoryProgress?.render(g.name);
 }
 function openMystery(kind,g,i){
  const messages={
@@ -733,63 +770,7 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
  <div class="july-finale-card" id="julyFinaleCard"></div>
 </div>
 
-<script id="july-finale-logic-v25">
-const JULY_TOTAL=(REAL_MEDIA.luglio||[]).length;
-const JULY_SEEN_KEY='casa_nostra_luglio_v25_visti';
-function julySeen(){try{return new Set(JSON.parse(localStorage.getItem(JULY_SEEN_KEY)||'[]'))}catch(e){return new Set()}}
-function markJulySeen(path){
- const s=julySeen(); s.add(path); localStorage.setItem(JULY_SEEN_KEY,JSON.stringify([...s]));
- updateJulyHeart();
-}
-function updateJulyHeart(){
- if(!window.monthWorld || monthWorld.classList.contains('hidden'))return;
- const title=monthWorld.querySelector('.solar-title strong');
- if(!title || title.textContent.trim().toLowerCase()!=='luglio')return;
- const h=monthWorld.querySelector('.month-heart'); if(!h)return;
- const old=monthWorld.querySelector('.july-call'); if(old)old.remove();
- if(JULY_TOTAL>0 && julySeen().size>=JULY_TOTAL){
-   h.classList.add('july-heart-ready');
-   h.setAttribute('role','button'); h.setAttribute('tabindex','0');
-   h.onclick=openJulyFinale; h.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')openJulyFinale()};
-   const p=document.createElement('div');p.className='july-call';p.textContent='c’è ancora qualcosa qui ✦';
-   monthWorld.querySelector('.solar-system').appendChild(p);
- }
-}
-function openJulyFinale(){
- const f=document.getElementById('julyFinale'),c=document.getElementById('julyFinaleCard');
- c.innerHTML=`
-  <p class="july-line" style="animation-delay:.2s">luglio non è ancora un ricordo.</p>
-  <p class="july-line" style="animation-delay:1.4s">non è ancora finito.</p>
-  <p class="july-line" style="animation-delay:2.6s">e forse è proprio questo il bello.</p>
-  <p class="july-line" style="animation-delay:4s">ci sono ancora giorni che non abbiamo vissuto.</p>
-  <p class="july-line" style="animation-delay:5.1s">foto che non abbiamo ancora scattato.</p>
-  <p class="july-line" style="animation-delay:6.2s">il resto di luglio dobbiamo riempirlo insieme. ♡</p>
-  <button class="july-continue" id="julyContinue">continuiamo?</button>`;
- f.classList.remove('hidden');f.setAttribute('aria-hidden','false');
- setTimeout(()=>{const b=document.getElementById('julyContinue');if(b)b.onclick=showJulyFuture},50);
-}
-function showJulyFuture(){
- const c=document.getElementById('julyFinaleCard');
- c.innerHTML=`<p class="july-line" style="opacity:1;transform:none">allora lasciamo un po’ di spazio al futuro.</p>
- <div class="future-stars">${'<i></i>'.repeat(10)}</div>
- <p class="july-future-text">questi posti sono ancora vuoti.<br>perché alcune cose devono ancora succederci.</p>
- <button class="july-continue" style="opacity:1;animation:none" onclick="document.getElementById('julyFinale').classList.add('hidden')">torniamo al nostro luglio ♡</button>`;
-}
-document.addEventListener('click',e=>{
- const b=e.target.closest('.secret-star');
- if(!b || !window.monthWorld)return;
- const t=monthWorld.querySelector('.solar-title strong');
- if(!t || t.textContent.trim().toLowerCase()!=='luglio')return;
- setTimeout(()=>{
-   const stars=[...monthWorld.querySelectorAll('.secret-star')];
-   const idx=stars.indexOf(b);
-   const item=(REAL_MEDIA.luglio||[])[idx];
-   if(item)markJulySeen(item[0]);
- },0);
-});
-const julyObserver=new MutationObserver(()=>setTimeout(updateJulyHeart,30));
-julyObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
-</script>
+
 
 
 <script id="v30-daily-hero-full-pool">
@@ -819,21 +800,139 @@ julyObserver.observe(document.body,{subtree:true,childList:true,attributes:true,
 })();
 </script>
 
-<script id="v31-engine">
-(()=>{const M=['febbraio','marzo','aprile','maggio','giugno','luglio'],K='casaNostraConstellationV31';
-const F={febbraio:'Qui è iniziato qualcosa che ancora non sapevamo quanto sarebbe diventato grande.',marzo:'Abbiamo cominciato a riempire il cielo senza nemmeno accorgercene.',aprile:'Ogni piccolo momento ha trovato il suo posto nel nostro universo.',maggio:'Più ricordi apriamo, più diventa chiaro quanto siamo diventati noi.',giugno:'Questa costellazione esiste perché ci siamo scelti ancora, giorno dopo giorno.',luglio:'Luglio non è finito. Questa costellazione ha ancora stelle che dobbiamo accendere insieme.'};
-const T={febbraio:'Il nostro inizio',marzo:'Sempre più noi',aprile:'La nostra orbita',maggio:'Casa nostra',giugno:'Sotto lo stesso cielo',luglio:'Da completare insieme'};
-let S={};try{S=JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){}let cur=null,timer;
-const pill=document.getElementById('v31Pill'),layer=document.getElementById('v31Layer'),svg=document.getElementById('v31Svg'),card=document.getElementById('v31Card');
-function norm(s){return(s||'').toLowerCase()}
-function month(el){for(let x=el,i=0;x&&i<8;x=x.parentElement,i++){let q=norm([x.id,x.className,x.dataset?.month,x.dataset?.galaxy,x.textContent?.slice(0,150)].join(' '));let m=M.find(v=>q.includes(v));if(m)return m}return cur}
-function total(m){let a=window.CASA_NOSTRA_FULL_MEDIA||{};return Array.isArray(a[m])?a[m].length:0}
-function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
-function key(el){let x=el.closest?.('[data-src],[data-index],[data-id],.memory,.memory-star,.star,.orbit-item,.media-star')||el;return x.dataset?.src||x.dataset?.id||x.dataset?.index||x.getAttribute?.('href')||x.querySelector?.('img,video,source')?.getAttribute?.('src')||[x.className,Math.round(x.getBoundingClientRect?.().left||0),Math.round(x.getBoundingClientRect?.().top||0)].join('|')}
-function progress(m){let seen=Object.keys(S[m]||{}).filter(k=>k!=='__celebrated').length,tot=total(m);if(!tot)return;pill.textContent=`${m[0].toUpperCase()+m.slice(1)} · ${Math.min(seen,tot)}/${tot} ricordi scoperti`;pill.classList.add('on');clearTimeout(timer);timer=setTimeout(()=>pill.classList.remove('on'),2600);if(seen>=tot)complete(m)}
-function complete(m){if(S[m]?.__celebrated)return;S[m]=S[m]||{};S[m].__celebrated=Date.now();save();svg.innerHTML='';let P=[[500,150],[620,270],[760,350],[650,470],[790,590],[620,650],[500,830],[380,650],[210,590],[350,470],[240,350],[380,270],[500,150]],ns='http://www.w3.org/2000/svg';for(let i=0;i<P.length-1;i++){let l=document.createElementNS(ns,'line');l.setAttribute('x1',P[i][0]);l.setAttribute('y1',P[i][1]);l.setAttribute('x2',P[i+1][0]);l.setAttribute('y2',P[i+1][1]);l.setAttribute('class','v31l');svg.appendChild(l);setTimeout(()=>l.classList.add('go'),i*100)}P.slice(0,-1).forEach((p,i)=>{let c=document.createElementNS(ns,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',i%3?3.2:5);c.setAttribute('class','v31n');svg.appendChild(c);setTimeout(()=>c.classList.add('go'),180+i*80)});layer.classList.add('on');document.getElementById('v31Title').textContent=T[m];document.getElementById('v31Text').textContent=F[m];setTimeout(()=>card.classList.add('on'),900);setTimeout(()=>{card.classList.remove('on');layer.classList.remove('on')},6500)}
-function record(el){let m=month(el);if(!m)return;cur=m;let k=key(el);if(!k)return;S[m]=S[m]||{};if(!S[m][k]){S[m][k]=Date.now();save()}progress(m)}
-document.addEventListener('click',e=>{let el=e.target.closest?.('[data-src],[data-index],[data-id],.memory,.memory-star,.star,.orbit-item,.media-star,img,video');if(el)record(el)},true);
-document.addEventListener('pointerup',e=>{let el=e.target.closest?.('[data-month],[data-galaxy],.galaxy,.galaxy-card,.galaxy-node');let m=el&&month(el);if(m)cur=m},true);
-window.CasaNostraConstellation={open(m,k){if(!M.includes(m)||!k)return;S[m]=S[m]||{};S[m][k]=Date.now();save();progress(m)},complete};})();
-</script></body></html>
+
+<script id="v32-memory-progress-engine">
+(()=>{
+ const MONTHS=['febbraio','marzo','aprile','maggio','giugno','luglio'];
+ const KEY='casaNostraMemoryProgressV32';
+ const oldKey='casaNostraConstellationV31';
+ let state={};
+ try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+
+ // Migrazione prudente dei vecchi progressi V31 solo se le chiavi coincidono con path reali.
+ try{
+   const old=JSON.parse(localStorage.getItem(oldKey)||'{}')||{};
+   MONTHS.forEach(m=>{
+     const valid=new Set((REAL_MEDIA[m]||[]).map(x=>x[0]));
+     Object.keys(old[m]||{}).forEach(k=>{
+       if(k!=='__celebrated' && valid.has(k)){
+         state[m]=state[m]||{};
+         state[m][k]=old[m][k]||Date.now();
+       }
+     });
+   });
+ }catch(e){}
+
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+ function total(m){return (REAL_MEDIA[m]||[]).length}
+ function seenPaths(m){
+   const valid=new Set((REAL_MEDIA[m]||[]).map(x=>x[0]));
+   return Object.keys(state[m]||{}).filter(k=>k!=='__completed'&&valid.has(k));
+ }
+ function hasSeen(m,path){return !!state[m]?.[path]}
+ function currentMonth(){
+   const t=document.querySelector('#monthWorld .solar-title strong');
+   return t?.textContent?.trim().toLowerCase()||null;
+ }
+ function render(m=currentMonth()){
+   if(!MONTHS.includes(m))return;
+   const seen=seenPaths(m).length, tot=total(m);
+   const p=document.getElementById('memoryProgress');
+   if(p)p.textContent=`${seen} / ${tot} ricordi scoperti`;
+   document.querySelectorAll('#monthWorld .secret-star[data-month="'+m+'"]').forEach(b=>{
+     b.classList.toggle('visited',hasSeen(m,b.dataset.src));
+   });
+   updateJulyHeart(m);
+ }
+ function markSeen(m,path,button){
+   if(!MONTHS.includes(m)||!path)return;
+   state[m]=state[m]||{};
+   const first=!state[m][path];
+   if(first){state[m][path]=Date.now();save()}
+   if(button)button.classList.add('visited');
+   render(m);
+   const pill=document.getElementById('v31Pill');
+   if(pill){
+     pill.textContent=`${m[0].toUpperCase()+m.slice(1)} · ${seenPaths(m).length}/${total(m)} ricordi scoperti`;
+     pill.classList.add('on');
+     clearTimeout(window.__cnPillTimer);
+     window.__cnPillTimer=setTimeout(()=>pill.classList.remove('on'),2200);
+   }
+   if(first && seenPaths(m).length===total(m)) complete(m);
+ }
+ function complete(m){
+   state[m]=state[m]||{};
+   if(state[m].__completed)return;
+   state[m].__completed=Date.now();save();
+   if(m==='luglio'){updateJulyHeart(m);return}
+   const titles={febbraio:'Il nostro inizio',marzo:'Sempre più noi',aprile:'La nostra orbita',maggio:'Casa nostra',giugno:'Sotto lo stesso cielo'};
+   const texts={
+     febbraio:'Hai acceso tutti i ricordi di febbraio. È qui che il nostro cielo ha cominciato a esistere.',
+     marzo:'Tutte le luci di marzo sono accese. Senza accorgercene, stavamo già diventando sempre più noi.',
+     aprile:'Aprile è completo. Ogni momento ha trovato il suo posto nella nostra orbita.',
+     maggio:'Hai attraversato tutto maggio. Più ricordi apriamo, più si vede quanto siamo diventati casa.',
+     giugno:'Tutto giugno brilla. Questa costellazione esiste perché ci siamo scelti ancora, giorno dopo giorno.'
+   };
+   const layer=document.getElementById('v31Layer'),card=document.getElementById('v31Card');
+   if(!layer||!card)return;
+   const svg=document.getElementById('v31Svg');
+   if(svg){
+     svg.innerHTML='';
+     const ns='http://www.w3.org/2000/svg',P=[[500,150],[620,270],[760,350],[650,470],[790,590],[620,650],[500,830],[380,650],[210,590],[350,470],[240,350],[380,270],[500,150]];
+     for(let i=0;i<P.length-1;i++){const l=document.createElementNS(ns,'line');l.setAttribute('x1',P[i][0]);l.setAttribute('y1',P[i][1]);l.setAttribute('x2',P[i+1][0]);l.setAttribute('y2',P[i+1][1]);l.setAttribute('class','v31l');svg.appendChild(l);setTimeout(()=>l.classList.add('go'),i*100)}
+     P.slice(0,-1).forEach((p,i)=>{const c=document.createElementNS(ns,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',i%3?3.2:5);c.setAttribute('class','v31n');svg.appendChild(c);setTimeout(()=>c.classList.add('go'),180+i*80)});
+   }
+   document.getElementById('v31Title').textContent=titles[m]||'Noi ✦';
+   document.getElementById('v31Text').textContent=texts[m]||'Hai acceso tutta la costellazione.';
+   layer.classList.add('on');setTimeout(()=>card.classList.add('on'),850);
+   setTimeout(()=>{card.classList.remove('on');layer.classList.remove('on')},6200);
+ }
+ function updateJulyHeart(m=currentMonth()){
+   if(m!=='luglio')return;
+   const heart=document.querySelector('#monthWorld .month-heart');
+   if(!heart)return;
+   document.querySelector('#monthWorld .july-call')?.remove();
+   const ready=total('luglio')>0 && seenPaths('luglio').length>=total('luglio');
+   heart.classList.toggle('july-heart-ready',ready);
+   heart.onclick=ready?openJulyFinale:null;
+   heart.onkeydown=ready?(e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openJulyFinale()}}):null;
+   if(ready){
+     heart.setAttribute('role','button');heart.setAttribute('tabindex','0');
+     const p=document.createElement('div');p.className='july-call';p.textContent='hai acceso tutto luglio · premi il cuore ✦';
+     document.querySelector('#monthWorld .solar-system')?.appendChild(p);
+   }else{
+     heart.removeAttribute('role');heart.removeAttribute('tabindex');
+   }
+ }
+ function openJulyFinale(){
+   const f=document.getElementById('julyFinale'),c=document.getElementById('julyFinaleCard');
+   if(!f||!c)return;
+   c.innerHTML=`
+    <p class="july-line" style="animation-delay:.2s">hai acceso tutte le stelle che esistono finora.</p>
+    <p class="july-line" style="animation-delay:1.5s">ma luglio non è ancora finito.</p>
+    <p class="july-line" style="animation-delay:2.8s">e io non voglio chiuderlo come un ricordo.</p>
+    <p class="july-line" style="animation-delay:4.1s">ci sono ancora giorni da vivere.</p>
+    <p class="july-line" style="animation-delay:5.3s">foto da scattare. video da fare. momenti da inventare.</p>
+    <p class="july-line" style="animation-delay:6.6s">il resto di questo mese dobbiamo completarlo insieme. ♡</p>
+    <button class="july-continue" id="julyContinue">continuiamo?</button>`;
+   f.classList.remove('hidden');f.setAttribute('aria-hidden','false');
+   setTimeout(()=>{const b=document.getElementById('julyContinue');if(b)b.onclick=showJulyFuture},50);
+ }
+ function showJulyFuture(){
+   const c=document.getElementById('julyFinaleCard');if(!c)return;
+   c.innerHTML=`<p class="july-line" style="opacity:1;transform:none">allora lasciamo un po’ di spazio al futuro.</p>
+   <div class="future-stars">${'<i></i>'.repeat(10)}</div>
+   <p class="july-future-text">queste stelle sono ancora vuote.<br>non perché manca qualcosa, ma perché devono ancora succederci.</p>
+   <button class="july-continue" style="opacity:1;animation:none" id="julyBack">torniamo al nostro luglio ♡</button>`;
+   document.getElementById('julyBack').onclick=()=>document.getElementById('julyFinale').classList.add('hidden');
+ }
+ window.CasaNostraMemoryProgress={markSeen,hasSeen,render,seenPaths,total,complete};
+ save();
+
+ // Se il mondo mensile viene ricreato, riallinea subito contatore e stelle visitate.
+ const obs=new MutationObserver(()=>{const m=currentMonth();if(MONTHS.includes(m))setTimeout(()=>render(m),0)});
+ obs.observe(document.getElementById('monthWorld')||document.body,{subtree:true,childList:true});
+})();
+</script>
+
+</body></html>
