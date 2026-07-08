@@ -994,13 +994,12 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
 </script>
 
 
+
 <script id="v33-living-stars-engine">
 (()=>{
  const NS='http://www.w3.org/2000/svg';
+ let drawQueued=false;
 
- function worldMonth(){
-   return document.querySelector('#monthWorld .solar-title strong')?.textContent?.trim().toLowerCase()||'';
- }
  function ensureSvg(){
    const solar=document.querySelector('#monthWorld .solar-system');
    if(!solar)return null;
@@ -1014,24 +1013,37 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
    }
    return svg;
  }
+
  function draw(){
-   const svg=ensureSvg(); if(!svg)return;
-   svg.innerHTML='';
+   drawQueued=false;
+   const svg=ensureSvg();
+   if(!svg)return;
    const stars=[...document.querySelectorAll('#monthWorld .secret-star.visited')]
-     .map(b=>({x:parseFloat(b.style.getPropertyValue('--x')),y:parseFloat(b.style.getPropertyValue('--y'))}))
+     .map(b=>({
+       x:parseFloat(b.style.getPropertyValue('--x')),
+       y:parseFloat(b.style.getPropertyValue('--y'))
+     }))
      .filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
-   if(stars.length<2)return;
-   // collega in ordine di scoperta visivo le stelle visitate, senza creare una ragnatela.
+
+   const frag=document.createDocumentFragment();
    for(let i=1;i<stars.length;i++){
      const a=stars[i-1],b=stars[i];
      const l=document.createElementNS(NS,'line');
-     l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);
-     l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);
+     l.setAttribute('x1',a.x); l.setAttribute('y1',a.y);
+     l.setAttribute('x2',b.x); l.setAttribute('y2',b.y);
      l.style.animationDelay=(i*45)+'ms';
-     svg.appendChild(l);
+     frag.appendChild(l);
    }
+   svg.replaceChildren(frag);
  }
- function decorateButtons(){
+
+ function queueDraw(){
+   if(drawQueued)return;
+   drawQueued=true;
+   requestAnimationFrame(draw);
+ }
+
+ function bindStars(){
    document.querySelectorAll('#monthWorld .secret-star').forEach(btn=>{
      if(btn.dataset.v33Bound)return;
      btn.dataset.v33Bound='1';
@@ -1042,21 +1054,44 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
            btn.classList.add('just-discovered');
            setTimeout(()=>btn.classList.remove('just-discovered'),950);
            const p=document.getElementById('memoryProgress');
-           if(p){p.classList.remove('progress-pop');void p.offsetWidth;p.classList.add('progress-pop');}
+           if(p){
+             p.classList.remove('progress-pop');
+             void p.offsetWidth;
+             p.classList.add('progress-pop');
+           }
          }
-         draw();
-       },40);
-     });
+         queueDraw();
+       },60);
+     },{passive:true});
    });
-   draw();
+   queueDraw();
  }
- const obs=new MutationObserver(()=>requestAnimationFrame(decorateButtons));
- obs.observe(document.getElementById('monthWorld')||document.body,{subtree:true,childList:true});
+
+ const world=document.getElementById('monthWorld');
+ if(world){
+   const obs=new MutationObserver(mutations=>{
+     // Ignora completamente le mutazioni interne all'SVG della costellazione:
+     // evita il loop ricorsivo che faceva crashare Safari/iPhone.
+     const relevant=mutations.some(m=>{
+       const target=m.target;
+       if(target instanceof Element && target.closest('#v33Constellation'))return false;
+       return [...m.addedNodes].some(n=>{
+         if(!(n instanceof Element))return false;
+         if(n.id==='v33Constellation'||n.closest?.('#v33Constellation'))return false;
+         return n.matches?.('.secret-star')||n.querySelector?.('.secret-star');
+       });
+     });
+     if(relevant)requestAnimationFrame(bindStars);
+   });
+   obs.observe(world,{subtree:true,childList:true});
+ }
+
  document.addEventListener('click',e=>{
-   if(e.target.closest('.galaxy'))setTimeout(decorateButtons,120);
+   if(e.target.closest('.galaxy'))setTimeout(bindStars,150);
  });
- setTimeout(decorateButtons,300);
+ setTimeout(bindStars,300);
 })();
 </script>
+
 
 </body></html>
