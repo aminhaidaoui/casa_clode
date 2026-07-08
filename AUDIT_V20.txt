@@ -1,0 +1,5 @@
+cresce_con_voi: 0
+come_ti_senti: 1
+metallic_css: 1
+
+Modifiche: sfondo blu ghiaccio metallico; eliminazione data fantasma centrale; header unico; correzioni precedenti preservate.

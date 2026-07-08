@@ -1,0 +1,6 @@
+fallback_header_occurrences: 6
+v18Today_occurrences: 0
+cresce_con_voi: 0
+come_ti_senti: 1
+
+Fix: rimossa la seconda barra artificiale V18; mantenuta e fissata la testata originale.

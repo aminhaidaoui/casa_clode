@@ -1,0 +1,4 @@
+v21_mood_buttons: 8
+lock_phrases: 20
+cresce_con_voi: 0
+countdown_blocks: 1

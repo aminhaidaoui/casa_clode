@@ -1,0 +1,12 @@
+V13 — SISTEMI SOLARI
+La mappa esterna V12 resta invariata.
+Ogni galassia apre un sistema solare del proprio colore con:
+- cuore centrale coordinato al mese
+- 5 orbite
+- foto = pianeta con miniatura
+- video = pianeta ad anello con play
+- lettera = corpo pergamena
+- audio = pianeta con onde
+- easter egg = stella che attraversa la pagina e poi si ferma
+- layout responsive mobile
+I tipi non-foto sono placeholder interattivi finché non colleghiamo i 281 media reali.

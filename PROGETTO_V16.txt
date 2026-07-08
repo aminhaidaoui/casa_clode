@@ -1,0 +1,9 @@
+V16 — FIX CHIRURGICO
+Base: V14 originale.
+
+Modifiche soltanto:
+1. APRILE: spostata sopra il centro tramite posizione CSS; il buco nero V14 non viene sostituito né ridisegnato.
+2. SISTEMA INTERNO MOBILE: centrato senza aumentare la scala.
+3. COMETA: attraversa tutto il sistema, esce, svanisce, resta assente e poi riparte.
+
+Nessun'altra parte estetica della V14 è stata intenzionalmente modificata.

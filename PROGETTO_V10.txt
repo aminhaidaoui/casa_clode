@@ -1,0 +1,19 @@
+CASA NOSTRA V10 — CUORE COSMICO
+
+NOVITÀ:
+- 5 galassie mantenute
+- nebulosa unica animata che collega tutto l'universo
+- filamenti cosmici verso il centro
+- cuore gravitazionale / buco nero centrale, non emoji e non cuore CSS a 3 pezzi
+- disco di accrescimento e lente luminosa animati
+- warp allungato da 1,45 s a 3,55 s
+- 155 scie stellari con accelerazione in 3 fasi
+- chiusura robusta dei ricordi
+- tornando alle galassie si chiudono modal, media, video/audio e overlay
+- ESC chiude prima il ricordo, poi il sistema
+- S torna alle galassie
+- rimosse etichette demo false foto/video/voce/parole: finché non colleghiamo i 281 media reali compare solo 'ricordo'
+- countdown lasciato invariato
+
+PROSSIMO PASSO:
+collegare i 281 media reali mese per mese.

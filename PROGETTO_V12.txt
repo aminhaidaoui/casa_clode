@@ -1,0 +1,9 @@
+V12 FIX GALASSIE
+- corretto bug JS: l'uso di `close` poteva richiamare window.close e interrompere lo script prima della creazione delle 5 galassie
+- ora la X usa esplicitamente document.getElementById('close')
+- le 5 galassie tornano visibili e cliccabili
+- Aprile resta spostato dal centro
+- trattini restano rimossi
+- tolta la scritta 'il centro del nostro universo'
+- centro rifatto più simile a un buco nero e meno a un cuore nero pieno
+- messaggi segreti sul lucchetto mantenuti

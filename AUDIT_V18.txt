@@ -1,0 +1,8 @@
+come_ti_senti_occurrences: 1
+cresce_con_voi: 0
+cresce_con_noi: 1
+v17_mood_sections: 0
+v17_countdown_sections: 0
+fixed_header_markers: 2
+
+Correzioni: duplicati V17 rimossi; placeholder video rimosso; header fixed vero; footer noi; cuori aggiunti; CSS/JS V17 duplicati disattivati.

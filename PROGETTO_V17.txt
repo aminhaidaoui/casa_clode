@@ -1,0 +1,17 @@
+CASA NOSTRA V17 — PAGINA VIVA
+
+Direzione:
+- mantiene intatta la V16 approvata per galassie, Aprile, sistemi interni e cometa
+- testata superiore resa sticky
+- aggiunti ❤️❤️ dopo 09.02.2026
+- ridotto il vuoto tra storia e contatore
+- predisposto uno spazio elegante per un futuro video di Amin
+- ripristinata sezione "come ti senti, patatina?" PRIMA delle opzioni
+- 8 stati: felice, triste, nostalgica, incazzata con me, ansiosa, stanca, sola, bisogno di coccole
+- ogni stato dà una risposta diversa
+- ripristinato countdown live al 20/07/2026 ore 14:30
+- footer corretto: "cresce con noi"
+- struttura pensata per continuare ad aggiungere contenuti nel tempo
+
+Nota progettuale:
+Lo slot video è volutamente un placeholder discreto: non è stato inventato un video.

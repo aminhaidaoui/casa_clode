@@ -1,0 +1,9 @@
+CASA NOSTRA V11 — RIFINITURA
+- Aprile spostato lontano dal cuore gravitazionale
+- Rimossi completamente i trattini/filamenti tratteggiati
+- X del ricordo resa realmente cliccabile con pointerdown + click protetti
+- click esterno continua a chiudere il ricordo
+- stanza chiusa cliccabile prima del 20 luglio
+- 7 messaggi diversi per Camilla, a rotazione
+- piccolo shake del lucchetto + messaggio toast in basso
+- countdown e resto della V10 invariati

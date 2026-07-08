@@ -1,0 +1,12 @@
+V9 INTERSTELLARE
+- Base V7 preservata: intro originale
+- Rimossi 'amin era qui' e griglia demo fotografica
+- Data di oggi dinamica + iniziato il 09.02.2026
+- 5 galassie: febbraio-giugno
+- Viaggio con pressione prolungata (850 ms)
+- Effetto warp interstellare
+- Sistema di ricordi interno per ogni mese
+- 8 emozioni
+- Prima del 20/07/2026 14:30: solo stanza chiusa + countdown
+- Nessun calendario futuro mostrato
+NOTA: i sistemi mensili usano ancora le 24 foto demo del V7. Il prossimo step è collegare i 281 media reali.
