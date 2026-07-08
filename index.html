@@ -1,4 +1,4 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Casa Nostra ♡</title>
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Casa Nostra ❤️</title>
 <style>
 :root{--bg:#f8f3ee;--paper:#fffaf6;--blush:#f1e2e1;--ink:#3b302d;--muted:#806f69;--rose:#c77d8b;--cherry:#9d4657;--line:rgba(59,48,45,.13)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}button{font:inherit}.hidden{display:none!important}.section{width:min(1160px,100%);margin:auto;padding:88px 24px}.ey{text-transform:uppercase;letter-spacing:.15em;font-size:.8rem;font-weight:700;color:var(--cherry)}h1,h2,h3{font-family:Georgia,serif;font-weight:400}h1{font-size:clamp(3.2rem,7vw,7rem);line-height:.9}h2{font-size:clamp(2.4rem,5vw,4.7rem);line-height:.98}.muted{color:var(--muted);line-height:1.65}.pill{border:1px solid var(--line);background:#fff9;color:var(--ink);border-radius:999px;padding:13px 18px;cursor:pointer}
 #intro{position:fixed;inset:0;z-index:50;background:linear-gradient(145deg,var(--bg),var(--blush));display:grid;place-items:center;transition:.8s}#it{font:clamp(2.1rem,5vw,5rem)/1.08 Georgia,serif;min-height:2.3em;text-align:center;opacity:0;transition:.6s}#it.on{opacity:1}#enter{opacity:0;pointer-events:none}#enter.on{opacity:1;pointer-events:auto}.accent{color:var(--cherry);font-style:italic}
@@ -213,7 +213,7 @@ footer{padding:70px 20px;text-align:center;background:var(--blush)}@media(max-wi
 
 /* === V17 — PAGINA VIVA === */
 
-/* Header Casa Nostra sempre visibile */
+/* Header Casa Nostra ❤️ sempre visibile */
 .site-header, header.topbar, .topbar, .site-top, .masthead{
   position:sticky !important;
   top:0 !important;
@@ -439,7 +439,96 @@ opacity:0;pointer-events:none;transition:.2s}.v21-lock-msg.show{opacity:1;transf
 body > header:first-of-type,header:first-of-type,.site-header:first-of-type,.topbar:first-of-type{min-height:56px!important;padding:8px 12px!important}
 [data-month="aprile"],.galaxy-aprile,.aprile-galaxy,#aprile{transform:translateX(-52px)!important}}
 
-</style></head><body>
+
+/* V22 CLEAN — ordine narrativo stabile */
+#comeTiSentiV21{
+  position:relative!important;
+  inset:auto!important;
+  top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+  transform:none!important;
+  z-index:auto!important;
+  clear:both!important;
+}
+@media(max-width:700px){
+  #comeTiSentiV21{
+    margin-top:48px!important;
+    margin-bottom:48px!important;
+  }
+}
+
+
+/* V23 — sezione emozioni integrata nel flusso, non più isola */
+#comeTiSentiV21,
+.v21-moods{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:clamp(64px,8vw,110px) max(24px,calc((100vw - 1180px)/2))!important;
+  border-radius:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  position:relative!important;
+  left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+  transform:none!important;
+  box-sizing:border-box!important;
+}
+#comeTiSentiV21::before,
+#comeTiSentiV21::after{display:none!important}
+.v21-mood-grid{width:100%!important;max-width:1100px!important;margin-left:auto!important;margin-right:auto!important}
+.v21-mood-answer{max-width:760px!important}
+@media(max-width:700px){
+  #comeTiSentiV21,.v21-moods{
+    margin:0!important;
+    padding:56px 18px!important;
+    width:100%!important;
+  }
+}
+
+
+/* V26 — cuori rossi header */
+header:first-of-type,
+.site-header:first-of-type,
+.topbar:first-of-type{
+  --header-heart-red:#e32636;
+}
+@media(max-width:700px){
+  header:first-of-type,
+  .site-header:first-of-type,
+  .topbar:first-of-type{
+    white-space:normal!important;
+  }
+}
+
+</style>
+<style id="july-finale-v25">
+.july-heart-ready{cursor:pointer!important;filter:drop-shadow(0 0 24px rgba(255,190,220,.9));animation:julyReady 1.8s ease-in-out infinite!important}
+@keyframes julyReady{50%{transform:translate(-50%,-50%) scale(1.1);filter:drop-shadow(0 0 42px rgba(255,190,220,1))}}
+.july-call{position:absolute;left:50%;top:68%;transform:translateX(-50%);z-index:20;color:#f7dce8;font:italic clamp(.8rem,2vw,1rem) Georgia,serif;letter-spacing:.04em;text-align:center;animation:fadeJuly 1.4s both}
+.july-finale{position:fixed;inset:0;z-index:10050;background:radial-gradient(circle at 50% 45%,#41283f 0,#17101f 42%,#05040b 100%);display:grid;place-items:center;padding:24px;color:#fff;overflow:hidden}
+.july-finale.hidden{display:none}
+.july-finale-card{position:relative;z-index:2;width:min(760px,92vw);text-align:center}
+.july-line{opacity:0;transform:translateY(12px);font:clamp(1.25rem,4vw,2.5rem) Georgia,serif;line-height:1.18;margin:.35em 0;animation:fadeJuly .9s forwards}
+@keyframes fadeJuly{to{opacity:1;transform:none}}
+.july-continue{opacity:0;margin-top:30px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:white;border-radius:999px;padding:14px 28px;font:1rem Georgia,serif;animation:fadeJuly 1s 7.5s forwards;cursor:pointer}
+.future-stars{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin:34px auto 20px;max-width:500px}
+.future-stars i{width:18px;height:18px;border:1px solid rgba(255,220,235,.7);border-radius:50%;box-shadow:0 0 18px rgba(255,190,220,.35);justify-self:center;animation:julyReady 2s ease-in-out infinite}
+.july-future-text{font:italic clamp(1rem,3vw,1.4rem) Georgia,serif;color:#f4dce7}
+</style>
+</head><body>
+
+
+<section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
+<main>
+<section class="section hero"><div class="nav"><b style="font-family:Georgia">casa nostra ❤️</b><div class="todaybox"><b id="todayDate"></b></div></div><div><p id="greet" class="ey"></p><h1>un posto che<br><span class="accent">continua a vivere</span><br>con noi</h1>
+<p id="days" class="muted"></p></div><div class="heroimg"><img src="assets/photos/feb_01.jpg"></div></section>
+
+<section class="section memory-prologue"><div><p class="ey">la nostra storia</p><h2>non una galleria.<br>un posto da attraversare.</h2><p class="muted">Ci sono ricordi che non voglio mettere in fila. Voglio che tu li scopra, uno spazio alla volta.</p></div><div class="quote">“alcune cose non si guardano soltanto. <span class="accent">si attraversano.</span>”</div></section>
+<section class="cosmos-shell"><div class="cosmos-copy"><p class="ey">la nostra galassia</p><h2>cinque destinazioni.<br>scegli dove tornare.</h2><p class="muted">Tieni premuta una luce. Quando senti che ti sta chiamando, non lasciarla andare.</p></div><div id="galaxyMap" class="galaxy-map"><div class="starfield"></div>
+    <div class="cosmic-nebula"></div>
+    <div class="gravity-heart" aria-label="cuore gravitazionale"><i class="disk"></i><i class="disk2"></i><i class="lens"></i><i class="void"></i></div>
+    <div class="holdhint">tieni premuta una galassia per partire ✦</div></div></section>
+<section class="section"><p class="ey">dimmi solo una cosa</p><h2>come ti senti oggi, patatina?</h2><div id="moodResult" class="mood-result muted">scegli quello che senti ♡</div></section>
 
 <section class="v21-moods" id="comeTiSentiV21">
 <div class="eyebrow">dimmi solo una cosa</div><h2>come ti senti oggi, patatina?</h2>
@@ -454,17 +543,6 @@ body > header:first-of-type,header:first-of-type,.site-header:first-of-type,.top
 <button class="v21-mood" data-v21m="ansiosa"><span class="ico">🫧</span><span class="txt">sono in ansia</span></button>
 <button class="v21-mood" data-v21m="coccole"><span class="ico">🧸</span><span class="txt">voglio le coccole</span></button>
 </div><div class="v21-mood-answer" id="v21MoodAnswer">Qualunque cosa scegli, io resto qui. ♡</div></section>
-<section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ♡</button></div></section>
-<main>
-<section class="section hero"><div class="nav"><b style="font-family:Georgia">casa nostra ♡</b><div class="todaybox"><b id="todayDate"></b></div></div><div><p id="greet" class="ey"></p><h1>un posto che<br><span class="accent">continua a vivere</span><br>con noi</h1>
-<p id="days" class="muted"></p></div><div class="heroimg"><img src="assets/photos/feb_01.jpg"></div></section>
-
-<section class="section memory-prologue"><div><p class="ey">la nostra storia</p><h2>non una galleria.<br>un posto da attraversare.</h2><p class="muted">Ci sono ricordi che non voglio mettere in fila. Voglio che tu li scopra, uno spazio alla volta.</p></div><div class="quote">“alcune cose non si guardano soltanto. <span class="accent">si attraversano.</span>”</div></section>
-<section class="cosmos-shell"><div class="cosmos-copy"><p class="ey">la nostra galassia</p><h2>cinque destinazioni.<br>scegli dove tornare.</h2><p class="muted">Tieni premuta una luce. Quando senti che ti sta chiamando, non lasciarla andare.</p></div><div id="galaxyMap" class="galaxy-map"><div class="starfield"></div>
-    <div class="cosmic-nebula"></div>
-    <div class="gravity-heart" aria-label="cuore gravitazionale"><i class="disk"></i><i class="disk2"></i><i class="lens"></i><i class="void"></i></div>
-    <div class="holdhint">tieni premuta una galassia per partire ✦</div></div></section>
-<section class="section"><p class="ey">dimmi solo una cosa</p><h2>come ti senti oggi, patatina?</h2><div id="moods" class="moods"></div><div id="moodResult" class="mood-result muted">scegli quello che senti ♡</div></section>
 <section class="section"><div id="distanceRoom" class="locked-room"><div><p class="ey">anche da lontano</p><h2>questa stanza<br>non è ancora pronta</h2><div class="lockmark"><div class="v21-countdown" id="v21Countdown">
 <div class="box"><b id="v21d">--</b><span>giorni</span></div><div class="box"><b id="v21h">--</b><span>ore</span></div>
 <div class="box"><b id="v21m">--</b><span>minuti</span></div><div class="box"><b id="v21s">--</b><span>secondi</span></div></div>🔒</div><p class="muted">si aprirà quando arriverà il suo momento</p><p id="roomCountdown" class="countdown"></p></div></div></section>
@@ -496,10 +574,12 @@ modal.addEventListener('click',e=>{if(e.target===modal)closeMemory()});
 const galaxies=[
  {name:'febbraio',x:18,y:27,c1:'#ffd4df',c2:'#9b5478'},
  {name:'marzo',x:72,y:20,c1:'#c8c0ff',c2:'#5e5794'},
- {name:'aprile',x:30,y:47,c1:'#ffd2a9',c2:'#a5675d'},
+ {name:'aprile',x:23,y:49,c1:'#ffd2a9',c2:'#a5675d'},
  {name:'maggio',x:79,y:68,c1:'#b8eee4',c2:'#477d7a'},
- {name:'giugno',x:25,y:73,c1:'#efbde6',c2:'#7e4e79'}
+ {name:'giugno',x:25,y:73,c1:'#efbde6',c2:'#7e4e79'},
+ {name:'luglio',x:70,y:83,c1:'#f6c7d8',c2:'#8f5870'}
 ];
+const REAL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "image"], ["assets/febbraio/002_image.jpg", "image"], ["assets/febbraio/003_image.jpg", "image"], ["assets/febbraio/004_image.jpg", "image"], ["assets/febbraio/005_image.jpg", "image"], ["assets/febbraio/006_image.jpg", "image"], ["assets/febbraio/007_image.jpg", "image"], ["assets/febbraio/008_image.jpg", "image"], ["assets/febbraio/009_video.mp4", "video"], ["assets/febbraio/010_image.jpg", "image"], ["assets/febbraio/011_image.jpg", "image"], ["assets/febbraio/012_image.jpg", "image"], ["assets/febbraio/013_image.jpg", "image"], ["assets/febbraio/014_image.jpg", "image"], ["assets/febbraio/015_image.jpg", "image"], ["assets/febbraio/016_image.jpg", "image"], ["assets/febbraio/017_image.jpg", "image"], ["assets/febbraio/018_image.jpg", "image"], ["assets/febbraio/019_image.jpg", "image"], ["assets/febbraio/020_image.jpg", "image"], ["assets/febbraio/021_video.mp4", "video"], ["assets/febbraio/022_image.jpg", "image"], ["assets/febbraio/023_image.jpg", "image"], ["assets/febbraio/024_image.jpg", "image"], ["assets/febbraio/025_image.jpg", "image"], ["assets/febbraio/026_image.jpg", "image"], ["assets/febbraio/027_image.jpg", "image"], ["assets/febbraio/028_image.jpg", "image"], ["assets/febbraio/029_image.jpg", "image"], ["assets/febbraio/030_image.jpg", "image"], ["assets/febbraio/031_image.jpg", "image"], ["assets/febbraio/032_image.jpg", "image"], ["assets/febbraio/033_image.jpg", "image"], ["assets/febbraio/034_video.mp4", "video"], ["assets/febbraio/035_image.jpg", "image"], ["assets/febbraio/036_image.jpg", "image"], ["assets/febbraio/037_video.mp4", "video"], ["assets/febbraio/038_video.mp4", "video"]], "marzo": [["assets/marzo/001_video.mp4", "video"], ["assets/marzo/002_image.jpg", "image"], ["assets/marzo/003_image.jpg", "image"], ["assets/marzo/004_video.mp4", "video"], ["assets/marzo/005_image.jpg", "image"], ["assets/marzo/006_video.mp4", "video"], ["assets/marzo/007_image.jpg", "image"], ["assets/marzo/008_image.jpg", "image"], ["assets/marzo/009_image.jpg", "image"], ["assets/marzo/010_image.jpg", "image"], ["assets/marzo/011_image.jpg", "image"], ["assets/marzo/012_image.jpg", "image"], ["assets/marzo/013_image.jpg", "image"], ["assets/marzo/014_image.jpg", "image"], ["assets/marzo/015_image.jpg", "image"], ["assets/marzo/016_image.jpg", "image"], ["assets/marzo/017_image.jpg", "image"], ["assets/marzo/018_image.jpg", "image"], ["assets/marzo/019_video.mp4", "video"], ["assets/marzo/020_video.mp4", "video"], ["assets/marzo/021_video.mp4", "video"], ["assets/marzo/022_image.jpg", "image"], ["assets/marzo/023_image.jpg", "image"], ["assets/marzo/024_image.jpg", "image"], ["assets/marzo/025_image.jpg", "image"], ["assets/marzo/026_image.jpg", "image"], ["assets/marzo/027_image.jpg", "image"], ["assets/marzo/028_image.jpg", "image"], ["assets/marzo/029_image.jpg", "image"], ["assets/marzo/030_image.jpg", "image"], ["assets/marzo/031_image.jpg", "image"], ["assets/marzo/032_video.mp4", "video"], ["assets/marzo/033_image.jpg", "image"], ["assets/marzo/034_image.jpg", "image"], ["assets/marzo/035_video.mp4", "video"], ["assets/marzo/036_image.jpg", "image"], ["assets/marzo/037_image.jpg", "image"], ["assets/marzo/038_image.jpg", "image"], ["assets/marzo/039_video.mp4", "video"], ["assets/marzo/040_video.mp4", "video"], ["assets/marzo/041_video.mp4", "video"], ["assets/marzo/042_video.mp4", "video"], ["assets/marzo/043_video.mp4", "video"]], "aprile": [["assets/aprile/001_image.jpg", "image"], ["assets/aprile/002_image.jpg", "image"], ["assets/aprile/003_image.jpg", "image"], ["assets/aprile/004_image.jpg", "image"], ["assets/aprile/005_video.mp4", "video"], ["assets/aprile/006_video.mp4", "video"], ["assets/aprile/007_video.mp4", "video"], ["assets/aprile/008_video.mp4", "video"], ["assets/aprile/009_image.jpg", "image"], ["assets/aprile/010_video.mp4", "video"], ["assets/aprile/011_video.mp4", "video"], ["assets/aprile/012_video.mp4", "video"], ["assets/aprile/013_video.mp4", "video"], ["assets/aprile/014_image.jpg", "image"], ["assets/aprile/015_image.jpg", "image"], ["assets/aprile/016_image.jpg", "image"], ["assets/aprile/017_image.jpg", "image"], ["assets/aprile/018_image.jpg", "image"], ["assets/aprile/019_image.jpg", "image"], ["assets/aprile/020_image.jpg", "image"], ["assets/aprile/021_image.jpg", "image"], ["assets/aprile/022_image.jpg", "image"], ["assets/aprile/023_image.jpg", "image"], ["assets/aprile/024_image.jpg", "image"], ["assets/aprile/025_image.jpg", "image"], ["assets/aprile/026_image.jpg", "image"], ["assets/aprile/027_image.jpg", "image"], ["assets/aprile/028_image.jpg", "image"], ["assets/aprile/029_image.jpg", "image"], ["assets/aprile/030_video.mp4", "video"], ["assets/aprile/031_image.jpg", "image"]], "maggio": [["assets/maggio/001_image.jpg", "image"], ["assets/maggio/002_image.jpg", "image"], ["assets/maggio/003_image.jpg", "image"], ["assets/maggio/004_video.mp4", "video"], ["assets/maggio/005_image.jpg", "image"], ["assets/maggio/006_image.jpg", "image"], ["assets/maggio/007_video.mp4", "video"], ["assets/maggio/008_image.jpg", "image"], ["assets/maggio/009_image.jpg", "image"], ["assets/maggio/010_image.jpg", "image"], ["assets/maggio/011_image.jpg", "image"], ["assets/maggio/012_image.jpg", "image"], ["assets/maggio/013_image.jpg", "image"], ["assets/maggio/014_video.mp4", "video"], ["assets/maggio/015_image.jpg", "image"], ["assets/maggio/016_image.jpg", "image"], ["assets/maggio/017_image.jpg", "image"], ["assets/maggio/018_image.jpg", "image"], ["assets/maggio/019_image.jpg", "image"], ["assets/maggio/020_image.jpg", "image"], ["assets/maggio/021_image.jpg", "image"], ["assets/maggio/022_image.jpg", "image"], ["assets/maggio/023_video.mp4", "video"], ["assets/maggio/024_image.jpg", "image"], ["assets/maggio/025_image.jpg", "image"], ["assets/maggio/026_video.mp4", "video"], ["assets/maggio/027_image.jpg", "image"], ["assets/maggio/028_image.jpg", "image"], ["assets/maggio/029_image.jpg", "image"], ["assets/maggio/030_image.jpg", "image"], ["assets/maggio/031_image.jpg", "image"], ["assets/maggio/032_image.jpg", "image"], ["assets/maggio/033_video.mp4", "video"], ["assets/maggio/034_video.mp4", "video"]], "giugno": [["assets/giugno/001_image.jpg", "image"], ["assets/giugno/002_image.jpg", "image"], ["assets/giugno/003_image.jpg", "image"], ["assets/giugno/004_image.jpg", "image"], ["assets/giugno/005_image.jpg", "image"], ["assets/giugno/006_image.jpg", "image"], ["assets/giugno/007_image.jpg", "image"], ["assets/giugno/008_video.mp4", "video"], ["assets/giugno/009_image.jpg", "image"], ["assets/giugno/010_image.jpg", "image"], ["assets/giugno/011_video.mp4", "video"], ["assets/giugno/012_image.jpg", "image"], ["assets/giugno/013_image.jpg", "image"], ["assets/giugno/014_image.jpg", "image"], ["assets/giugno/015_image.jpg", "image"], ["assets/giugno/016_image.jpg", "image"], ["assets/giugno/017_image.jpg", "image"], ["assets/giugno/018_image.jpg", "image"], ["assets/giugno/019_image.jpg", "image"], ["assets/giugno/020_image.jpg", "image"], ["assets/giugno/021_image.jpg", "image"], ["assets/giugno/022_image.jpg", "image"], ["assets/giugno/023_image.jpg", "image"], ["assets/giugno/024_image.jpg", "image"]], "luglio": [["assets/luglio/001_video.mp4", "video"], ["assets/luglio/002_image.jpg", "image"], ["assets/luglio/003_video.mp4", "video"], ["assets/luglio/004_image.jpg", "image"], ["assets/luglio/005_image.jpg", "image"], ["assets/luglio/006_image.jpg", "image"], ["assets/luglio/007_image.jpg", "image"], ["assets/luglio/008_image.jpg", "image"], ["assets/luglio/009_image.jpg", "image"], ["assets/luglio/010_image.jpg", "image"], ["assets/luglio/011_image.jpg", "image"], ["assets/luglio/012_video.mp4", "video"], ["assets/luglio/013_image.jpg", "image"], ["assets/luglio/014_video.mp4", "video"]]};
 galaxies.forEach((g,idx)=>{
  let b=document.createElement('button');b.className='destination';b.style.cssText=`--x:${g.x}%;--y:${g.y}%;--c1:${g.c1};--c2:${g.c2}`;
  b.innerHTML='<i class="nebula"></i><span>'+g.name+'</span>';galaxyMap.appendChild(b);
@@ -516,12 +596,7 @@ function travel(g,idx){
  setTimeout(()=>{openWorld(g,idx);warp.classList.add('hidden')},3550);
 }
 function openWorld(g,idx){
- const demoPhotos=[
-  'assets/febbraio/001_image.jpg','assets/marzo/001_image.jpg','assets/aprile/001_image.jpg',
-  'assets/maggio/001_image.jpg','assets/giugno/001_image.jpg'
- ];
- const photo=demoPhotos[idx]||demoPhotos[0];
- const kinds=['foto','frase','foto','video','audio','foto','lettera','foto','frase','segreto','foto','audio','video','foto','lettera','foto','frase','foto'];
+ const items=REAL_MEDIA[g.name]||[];
  monthWorld.style.setProperty('--month',g.c1||'#e9a8c2');
  monthWorld.innerHTML=`
   <button id="backSpace" class="back-space">← torna alle galassie</button>
@@ -536,25 +611,26 @@ function openWorld(g,idx){
 
  document.getElementById('backSpace').onclick=closeWorld;
  const field=document.getElementById('secretStars');
-
- const positions=[
-  [19,28],[32,20],[48,24],[65,19],[79,31],[16,48],[29,42],[42,36],[61,39],
-  [82,49],[20,67],[35,61],[50,68],[67,59],[80,70],[29,79],[55,80],[72,78]
- ];
- positions.forEach((pos,i)=>{
+ const total=items.length;
+ items.forEach((item,i)=>{
+   const a=(i*137.508)*Math.PI/180, ring=18+(i%7)*5.2;
+   const x=Math.max(7,Math.min(93,50+Math.cos(a)*ring));
+   const y=Math.max(13,Math.min(88,53+Math.sin(a)*ring*.72));
    const b=document.createElement('button');
    b.className='secret-star';
-   b.style.cssText=`--x:${pos[0]}%;--y:${pos[1]}%;--s:${9+(i%4)*3}px;--d:${1.5+(i%6)*.38}s;animation-delay:${(i%7)*-.31}s`;
+   b.style.cssText=`--x:${x}%;--y:${y}%;--s:${8+(i%4)*2}px;--d:${1.5+(i%6)*.38}s;animation-delay:${(i%7)*-.31}s`;
    b.setAttribute('aria-label','ricordo misterioso');
    b.onclick=()=>{
      b.classList.add('visited');
-     const kind=kinds[(i+idx*3)%kinds.length];
-     if(kind==='foto') openPhoto(photo,g.name+' · un ricordo');
-     else openMystery(kind,g,i);
+     const path=item[0], type=item[1];
+     if(type==='video'){
+       mediaMount.innerHTML='<video controls playsinline preload="metadata" style="display:block;max-width:100%;max-height:78vh;margin:auto;border-radius:18px"><source src="'+path+'"></video>';
+       mc.textContent=g.name+' · un ricordo';
+       modal.classList.remove('hidden');
+     }else openPhoto(path,g.name+' · un ricordo');
    };
    field.appendChild(b);
  });
-
  const star=document.getElementById('easterStar');
  star.onclick=()=>openMystery('segreto',g,99);
  monthWorld.classList.remove('hidden');
@@ -636,5 +712,67 @@ let t=document.createElement('div');t.className='v21-lock-msg';document.body.app
 function msg(){let i;do{i=Math.floor(Math.random()*L.length)}while(i===last);last=i;t.textContent=L[i];t.classList.add('show');clearTimeout(to);to=setTimeout(()=>t.classList.remove('show'),2600)}
 document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[data-lock],.locked');if(q){e.preventDefault();msg()}},true);
 })();
+</script>
+
+<div id="julyFinale" class="july-finale hidden" aria-hidden="true">
+ <div class="july-finale-card" id="julyFinaleCard"></div>
+</div>
+
+<script id="july-finale-logic-v25">
+const JULY_TOTAL=(REAL_MEDIA.luglio||[]).length;
+const JULY_SEEN_KEY='casa_nostra_luglio_v25_visti';
+function julySeen(){try{return new Set(JSON.parse(localStorage.getItem(JULY_SEEN_KEY)||'[]'))}catch(e){return new Set()}}
+function markJulySeen(path){
+ const s=julySeen(); s.add(path); localStorage.setItem(JULY_SEEN_KEY,JSON.stringify([...s]));
+ updateJulyHeart();
+}
+function updateJulyHeart(){
+ if(!window.monthWorld || monthWorld.classList.contains('hidden'))return;
+ const title=monthWorld.querySelector('.solar-title strong');
+ if(!title || title.textContent.trim().toLowerCase()!=='luglio')return;
+ const h=monthWorld.querySelector('.month-heart'); if(!h)return;
+ const old=monthWorld.querySelector('.july-call'); if(old)old.remove();
+ if(JULY_TOTAL>0 && julySeen().size>=JULY_TOTAL){
+   h.classList.add('july-heart-ready');
+   h.setAttribute('role','button'); h.setAttribute('tabindex','0');
+   h.onclick=openJulyFinale; h.onkeydown=e=>{if(e.key==='Enter'||e.key===' ')openJulyFinale()};
+   const p=document.createElement('div');p.className='july-call';p.textContent='c’è ancora qualcosa qui ✦';
+   monthWorld.querySelector('.solar-system').appendChild(p);
+ }
+}
+function openJulyFinale(){
+ const f=document.getElementById('julyFinale'),c=document.getElementById('julyFinaleCard');
+ c.innerHTML=`
+  <p class="july-line" style="animation-delay:.2s">luglio non è ancora un ricordo.</p>
+  <p class="july-line" style="animation-delay:1.4s">non è ancora finito.</p>
+  <p class="july-line" style="animation-delay:2.6s">e forse è proprio questo il bello.</p>
+  <p class="july-line" style="animation-delay:4s">ci sono ancora giorni che non abbiamo vissuto.</p>
+  <p class="july-line" style="animation-delay:5.1s">foto che non abbiamo ancora scattato.</p>
+  <p class="july-line" style="animation-delay:6.2s">il resto di luglio dobbiamo riempirlo insieme. ♡</p>
+  <button class="july-continue" id="julyContinue">continuiamo?</button>`;
+ f.classList.remove('hidden');f.setAttribute('aria-hidden','false');
+ setTimeout(()=>{const b=document.getElementById('julyContinue');if(b)b.onclick=showJulyFuture},50);
+}
+function showJulyFuture(){
+ const c=document.getElementById('julyFinaleCard');
+ c.innerHTML=`<p class="july-line" style="opacity:1;transform:none">allora lasciamo un po’ di spazio al futuro.</p>
+ <div class="future-stars">${'<i></i>'.repeat(10)}</div>
+ <p class="july-future-text">questi posti sono ancora vuoti.<br>perché alcune cose devono ancora succederci.</p>
+ <button class="july-continue" style="opacity:1;animation:none" onclick="document.getElementById('julyFinale').classList.add('hidden')">torniamo al nostro luglio ♡</button>`;
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('.secret-star');
+ if(!b || !window.monthWorld)return;
+ const t=monthWorld.querySelector('.solar-title strong');
+ if(!t || t.textContent.trim().toLowerCase()!=='luglio')return;
+ setTimeout(()=>{
+   const stars=[...monthWorld.querySelectorAll('.secret-star')];
+   const idx=stars.indexOf(b);
+   const item=(REAL_MEDIA.luglio||[])[idx];
+   if(item)markJulySeen(item[0]);
+ },0);
+});
+const julyObserver=new MutationObserver(()=>setTimeout(updateJulyHeart,30));
+julyObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
 </script>
 </body></html>

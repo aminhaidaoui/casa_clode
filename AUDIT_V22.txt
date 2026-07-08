@@ -1,0 +1,5 @@
+blocchi_emozioni: 1
+vecchi_blocchi_moods: 1
+countdown: 1
+cresce_con_voi: 0
+emozioni_prima_countdown: True

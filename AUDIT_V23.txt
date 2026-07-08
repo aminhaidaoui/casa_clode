@@ -1,0 +1,4 @@
+blocco_emozioni_nuovo: 1
+vecchio_id_moods: 0
+countdown: 1
+cresce_con_voi: 0
