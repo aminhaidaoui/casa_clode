@@ -530,7 +530,7 @@ img[src="assets/home/IMG_0201.jpg"] {
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
 <main>
 <section class="section hero"><div class="nav"><b style="font-family:Georgia">casa nostra ❤️</b><div class="todaybox"><b id="todayDate"></b></div></div><div><p id="greet" class="ey"></p><h1>un posto che<br><span class="accent">continua a vivere</span><br>con noi</h1>
-<p id="days" class="muted"></p></div><div class="heroimg"><img src="assets/home/IMG_0201.jpg"></div></section>
+<p id="days" class="muted"></p></div><div class="heroimg"><img src="assets/home/IMG_0201.jpg" id="dailyHeroPhoto"></div></section>
 
 <section class="section memory-prologue"><div><p class="ey">la nostra storia</p><h2>non una galleria.<br>un posto da attraversare.</h2><p class="muted">Ci sono ricordi che non voglio mettere in fila. Voglio che tu li scopra, uno spazio alla volta.</p></div><div class="quote">“alcune cose non si guardano soltanto. <span class="accent">si attraversano.</span>”</div></section>
 <section class="cosmos-shell"><div class="cosmos-copy"><p class="ey">la nostra galassia</p><h2>cinque destinazioni.<br>scegli dove tornare.</h2><p class="muted">Tieni premuta una luce. Quando senti che ti sta chiamando, non lasciarla andare.</p></div><div id="galaxyMap" class="galaxy-map"><div class="starfield"></div>
@@ -780,4 +780,64 @@ document.addEventListener('click',e=>{
 const julyObserver=new MutationObserver(()=>setTimeout(updateJulyHeart,30));
 julyObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
 </script>
+
+<script id="v29-daily-hero-photo">
+(() => {
+  const photos = ["assets/luglio/002_image.jpg", "assets/luglio/004_image.jpg", "assets/luglio/005_image.jpg", "assets/luglio/006_image.jpg", "assets/luglio/007_image.jpg", "assets/luglio/008_image.jpg", "assets/luglio/009_image.jpg", "assets/luglio/010_image.jpg", "assets/luglio/011_image.jpg", "assets/luglio/013_image.jpg", "assets/photos/feb_01.jpg", "assets/photos/feb_02.jpg", "assets/photos/feb_03.jpg", "assets/photos/feb_04.jpg", "assets/photos/feb_05.jpg", "assets/photos/feb_06.jpg", "assets/photos/feb_07.jpg", "assets/photos/feb_08.jpg", "assets/photos/feb_09.jpg", "assets/photos/feb_10.jpg", "assets/photos/feb_11.jpg", "assets/photos/feb_12.jpg", "assets/photos/feb_13.jpg", "assets/photos/feb_14.jpg", "assets/photos/feb_15.jpg", "assets/photos/feb_16.jpg", "assets/photos/feb_17.jpg", "assets/photos/feb_18.jpg", "assets/photos/feb_19.jpg", "assets/photos/feb_20.jpg", "assets/photos/feb_21.jpg", "assets/photos/feb_22.jpg", "assets/photos/feb_23.jpg", "assets/photos/feb_24.jpg"];
+  const hero = document.getElementById('dailyHeroPhoto');
+  if (!hero || photos.length < 2) return;
+
+  const now = new Date();
+  const dayKey = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0')
+  ].join('-');
+
+  function hashString(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  const storageKey = 'casaNostraDailyHeroV29';
+  const historyKey = 'casaNostraDailyHeroHistoryV29';
+  let chosen = null;
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    if (saved && saved.day === dayKey && photos.includes(saved.photo)) {
+      chosen = saved.photo;
+    } else {
+      let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      history = Array.isArray(history) ? history.filter(p => photos.includes(p)) : [];
+
+      const recent = new Set(history.slice(-Math.min(30, Math.max(1, photos.length - 1))));
+      let available = photos.filter(p => !recent.has(p));
+      if (!available.length) available = photos.slice();
+
+      const index = hashString('casa-nostra-' + dayKey) % available.length;
+      chosen = available[index];
+
+      history.push(chosen);
+      history = history.slice(-Math.min(60, photos.length));
+      localStorage.setItem(historyKey, JSON.stringify(history));
+      localStorage.setItem(storageKey, JSON.stringify({ day: dayKey, photo: chosen }));
+    }
+  } catch (e) {
+    chosen = photos[hashString('casa-nostra-' + dayKey) % photos.length];
+  }
+
+  if (chosen) {
+    hero.src = chosen;
+    hero.alt = 'Il nostro ricordo del giorno';
+    hero.loading = 'eager';
+    hero.decoding = 'async';
+  }
+})();
+</script>
+
 </body></html>

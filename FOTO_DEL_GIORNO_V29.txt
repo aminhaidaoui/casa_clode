@@ -1,0 +1,9 @@
+CASA NOSTRA V29 — FOTO DEL GIORNO
+Foto disponibili nel pool: 34
+Comportamento:
+- una foto diversa scelta automaticamente ogni giorno
+- resta uguale per tutta la giornata anche dopo refresh
+- evita fino a 30 foto recenti sullo stesso dispositivo/browser
+- nessun video usato come hero
+- ritaglio ad arco della V28 mantenuto
+- fallback deterministico se localStorage non è disponibile
