@@ -591,6 +591,7 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 </style>
 
 
+<style id="v34-ios-media-memory-style">#mediaMount{contain:layout paint;max-width:100%;overflow:hidden}#mediaMount img,#mediaMount video{max-width:100%;max-height:72dvh}@supports not (height:1dvh){#mediaMount img,#mediaMount video{max-height:72vh}}</style>
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
@@ -962,4 +963,43 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
 
 
 
+<script id="v34-ios-media-memory-fix">
+(()=>{
+ const modal=document.getElementById('modal'), mount=document.getElementById('mediaMount');
+ if(!modal||!mount)return;
+ function release(){
+  mount.querySelectorAll('video,audio').forEach(v=>{try{v.pause();v.removeAttribute('src');v.querySelectorAll('source').forEach(s=>s.removeAttribute('src'));v.load()}catch(e){}});
+  mount.querySelectorAll('img').forEach(i=>{try{i.onload=null;i.onerror=null;i.removeAttribute('src');i.removeAttribute('srcset')}catch(e){}});
+  mount.replaceChildren();
+ }
+ function openSafe(path,type,caption){
+  release();
+  let el;
+  if(type==='video'){
+   el=document.createElement('video'); el.controls=true; el.playsInline=true; el.preload='none'; el.setAttribute('webkit-playsinline',''); el.src=path;
+   el.style.cssText='display:block;max-width:100%;max-height:72dvh;margin:auto;border-radius:18px;background:#000';
+  }else{
+   el=document.createElement('img'); el.alt=caption||'un ricordo'; el.decoding='async'; el.src=path;
+   el.style.cssText='display:block;max-width:100%;max-height:72dvh;width:auto;height:auto;object-fit:contain;margin:auto;border-radius:18px';
+  }
+  mount.replaceChildren(el);
+  const c=document.getElementById('modalCaption'); if(c)c.textContent=caption||'un ricordo';
+  modal.classList.remove('hidden');
+ }
+ document.addEventListener('click',e=>{
+  const star=e.target.closest('#monthWorld .secret-star'); if(!star)return;
+  const path=star.dataset.src; if(!path)return;
+  const month=star.dataset.month||document.querySelector('#monthWorld .solar-title strong')?.textContent?.trim().toLowerCase()||'';
+  e.preventDefault(); e.stopImmediatePropagation();
+  const item=(window.REAL_MEDIA?.[month]||[]).find(x=>x[0]===path);
+  const type=item?.[1]||(/\.(mp4|mov|m4v|webm)(\?|$)/i.test(path)?'video':'photo');
+  openSafe(path,type,month+' · un ricordo');
+  window.CasaNostraMemoryProgress?.markSeen(month,path,star);
+ },true);
+ document.addEventListener('click',e=>{if(e.target.closest('#modalClose')||e.target===modal)setTimeout(release,0)},true);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')setTimeout(release,0)},true);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)mount.querySelectorAll('video').forEach(v=>{try{v.pause()}catch(e){}})});
+ window.CasaNostraHardReleaseMedia=release;
+})();
+</script>
 </body></html>
