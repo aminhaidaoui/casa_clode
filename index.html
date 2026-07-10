@@ -591,39 +591,6 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 </style>
 
 
-<style id="v33-living-stars-style">
-#monthWorld .secret-star:not(.visited){
-  filter:brightness(1.18) saturate(1.08);
-}
-#monthWorld .secret-star.visited{
-  opacity:.46!important;
-  filter:saturate(.45) brightness(.72)!important;
-  transform:translate(-50%,-50%) scale(.88);
-}
-#monthWorld .secret-star.just-discovered{
-  animation:v33Discover .9s cubic-bezier(.2,.8,.2,1) both!important;
-}
-@keyframes v33Discover{
-  0%{transform:translate(-50%,-50%) scale(1);filter:brightness(1)}
-  45%{transform:translate(-50%,-50%) scale(2.15);filter:brightness(2.3) drop-shadow(0 0 18px #fff)}
-  100%{transform:translate(-50%,-50%) scale(.88);filter:saturate(.45) brightness(.72)}
-}
-#memoryProgress.progress-pop{animation:v33ProgressPop .55s ease}
-@keyframes v33ProgressPop{
-  45%{transform:translateX(-50%) scale(1.12);box-shadow:0 0 22px rgba(255,255,255,.35)}
-}
-#v33Constellation{
-  position:absolute;inset:0;width:100%;height:100%;z-index:7;
-  pointer-events:none;overflow:visible;
-}
-#v33Constellation line{
-  stroke:rgba(255,225,238,.42);stroke-width:.42;
-  filter:drop-shadow(0 0 2px rgba(255,210,230,.5));
-  stroke-dasharray:4 5;animation:v33LineIn .7s ease both;
-}
-@keyframes v33LineIn{from{opacity:0;stroke-dashoffset:18}to{opacity:1;stroke-dashoffset:0}}
-</style>
-
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
@@ -994,69 +961,5 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
 </script>
 
 
-<script id="v33-living-stars-engine">
-(()=>{
- const NS='http://www.w3.org/2000/svg';
-
- function worldMonth(){
-   return document.querySelector('#monthWorld .solar-title strong')?.textContent?.trim().toLowerCase()||'';
- }
- function ensureSvg(){
-   const solar=document.querySelector('#monthWorld .solar-system');
-   if(!solar)return null;
-   let svg=document.getElementById('v33Constellation');
-   if(!svg){
-     svg=document.createElementNS(NS,'svg');
-     svg.id='v33Constellation';
-     svg.setAttribute('viewBox','0 0 100 100');
-     svg.setAttribute('preserveAspectRatio','none');
-     solar.prepend(svg);
-   }
-   return svg;
- }
- function draw(){
-   const svg=ensureSvg(); if(!svg)return;
-   svg.innerHTML='';
-   const stars=[...document.querySelectorAll('#monthWorld .secret-star.visited')]
-     .map(b=>({x:parseFloat(b.style.getPropertyValue('--x')),y:parseFloat(b.style.getPropertyValue('--y'))}))
-     .filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));
-   if(stars.length<2)return;
-   // collega in ordine di scoperta visivo le stelle visitate, senza creare una ragnatela.
-   for(let i=1;i<stars.length;i++){
-     const a=stars[i-1],b=stars[i];
-     const l=document.createElementNS(NS,'line');
-     l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);
-     l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);
-     l.style.animationDelay=(i*45)+'ms';
-     svg.appendChild(l);
-   }
- }
- function decorateButtons(){
-   document.querySelectorAll('#monthWorld .secret-star').forEach(btn=>{
-     if(btn.dataset.v33Bound)return;
-     btn.dataset.v33Bound='1';
-     btn.addEventListener('click',()=>{
-       const wasSeen=btn.classList.contains('visited');
-       setTimeout(()=>{
-         if(!wasSeen){
-           btn.classList.add('just-discovered');
-           setTimeout(()=>btn.classList.remove('just-discovered'),950);
-           const p=document.getElementById('memoryProgress');
-           if(p){p.classList.remove('progress-pop');void p.offsetWidth;p.classList.add('progress-pop');}
-         }
-         draw();
-       },40);
-     });
-   });
-   draw();
- }
- const obs=new MutationObserver(()=>requestAnimationFrame(decorateButtons));
- obs.observe(document.getElementById('monthWorld')||document.body,{subtree:true,childList:true});
- document.addEventListener('click',e=>{
-   if(e.target.closest('.galaxy'))setTimeout(decorateButtons,120);
- });
- setTimeout(decorateButtons,300);
-})();
-</script>
 
 </body></html>
