@@ -592,6 +592,33 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 
 
 <style id="v34-ios-media-memory-style">#mediaMount{contain:layout paint;max-width:100%;overflow:hidden}#mediaMount img,#mediaMount video{max-width:100%;max-height:72dvh}@supports not (height:1dvh){#mediaMount img,#mediaMount video{max-height:72vh}}</style>
+
+<style id="v35-light-discovery-style">
+#monthWorld .secret-star.cn-new-flash{
+  animation:cnNewFlash .72s ease-out!important;
+}
+@keyframes cnNewFlash{
+  0%{filter:brightness(1);transform:translate(-50%,-50%) scale(1)}
+  42%{filter:brightness(2.15) drop-shadow(0 0 13px rgba(255,255,255,.95));transform:translate(-50%,-50%) scale(1.5)}
+  100%{filter:brightness(.78) saturate(.55);transform:translate(-50%,-50%) scale(1)}
+}
+#memoryProgress.cn-count-pop{animation:cnCountPop .42s ease-out}
+@keyframes cnCountPop{
+  50%{transform:translateX(-50%) scale(1.08)}
+}
+.cn-milestone-toast{
+  position:fixed;left:50%;bottom:max(28px,calc(env(safe-area-inset-bottom) + 18px));
+  transform:translate(-50%,18px);z-index:10050;
+  width:min(86vw,430px);padding:13px 17px;border-radius:18px;
+  background:rgba(15,12,25,.86);border:1px solid rgba(255,255,255,.18);
+  color:#fff;text-align:center;font:italic 14px/1.35 Georgia,serif;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;pointer-events:none;transition:opacity .28s ease,transform .28s ease;
+}
+.cn-milestone-toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:650px){.cn-milestone-toast{font-size:13px}}
+</style>
+
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
@@ -1002,4 +1029,58 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
  window.CasaNostraHardReleaseMedia=release;
 })();
 </script>
+
+<script id="v35-light-discovery-engine">
+(()=>{
+ const milestoneText={
+  febbraio:{25:'stai riaccendendo il nostro inizio ✦',50:'metà febbraio è già tornata a brillare ♡',75:'manca poco per attraversare tutto il nostro primo cielo'},
+  marzo:{25:'marzo sta tornando a parlare di noi ✦',50:'sei già a metà del nostro marzo ♡',75:'ancora poche luci e ci siamo quasi'},
+  aprile:{25:'la nostra orbita si sta riaccendendo ✦',50:'metà aprile è di nuovo qui con noi ♡',75:'il cuore di aprile è quasi completo'},
+  maggio:{25:'maggio comincia a profumare di casa ✦',50:'hai ritrovato metà del nostro maggio ♡',75:'manca pochissimo per riaccenderlo tutto'},
+  giugno:{25:'giugno sta tornando sotto lo stesso cielo ✦',50:'metà delle sue luci sono già accese ♡',75:'ancora un po’ e giugno sarà tutto qui'},
+  luglio:{25:'luglio ha ancora tanto da raccontarci ✦',50:'metà dei ricordi di luglio è già accesa ♡',75:'ci siamo quasi… ma questo mese non è ancora finito'}
+ };
+ const shownKey='casaNostraMilestonesV35';
+ let shown={}; try{shown=JSON.parse(localStorage.getItem(shownKey)||'{}')||{}}catch(e){}
+
+ function toast(text){
+   let t=document.getElementById('cnMilestoneToast');
+   if(!t){t=document.createElement('div');t.id='cnMilestoneToast';t.className='cn-milestone-toast';document.body.appendChild(t)}
+   t.textContent=text;t.classList.remove('on');void t.offsetWidth;t.classList.add('on');
+   clearTimeout(window.__cnToastTimer);
+   window.__cnToastTimer=setTimeout(()=>t.classList.remove('on'),3300);
+ }
+ function month(){return document.querySelector('#monthWorld .solar-title strong')?.textContent?.trim().toLowerCase()||''}
+ function count(m){return window.CasaNostraMemoryProgress?.seenPaths(m)?.length||0}
+ function total(m){return window.CasaNostraMemoryProgress?.total(m)||0}
+ function checkMilestone(m,before,after){
+   const tot=total(m);if(!tot||after<=before)return;
+   [25,50,75].forEach(p=>{
+     const threshold=Math.ceil(tot*p/100);
+     const id=m+'-'+p;
+     if(before<threshold && after>=threshold && !shown[id]){
+       shown[id]=Date.now();try{localStorage.setItem(shownKey,JSON.stringify(shown))}catch(e){}
+       setTimeout(()=>toast(milestoneText[m]?.[p]||'un altro pezzo di cielo si è acceso ✦'),520);
+     }
+   });
+ }
+ document.addEventListener('click',e=>{
+   const star=e.target.closest('#monthWorld .secret-star');
+   if(!star)return;
+   const m=star.dataset.month||month();
+   const wasSeen=window.CasaNostraMemoryProgress?.hasSeen(m,star.dataset.src);
+   const before=count(m);
+   if(!wasSeen){
+     star.classList.add('cn-new-flash');
+     setTimeout(()=>star.classList.remove('cn-new-flash'),760);
+     setTimeout(()=>{
+       const p=document.getElementById('memoryProgress');
+       if(p){p.classList.remove('cn-count-pop');void p.offsetWidth;p.classList.add('cn-count-pop')}
+       checkMilestone(m,before,count(m));
+     },100);
+   }
+ },true);
+})();
+</script>
+
 </body></html>
