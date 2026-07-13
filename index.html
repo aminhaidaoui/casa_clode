@@ -1083,4 +1083,41 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
 })();
 </script>
 
+
+<script id="v36-progress-restore">
+(function(){
+const KEY='CasaNostraMemory';
+function restore(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(!raw) return;
+    const data=JSON.parse(raw);
+    if(!window.CasaNostraMemoryProgress) return;
+
+    Object.keys(data||{}).forEach(month=>{
+      const seen=(data[month]&&data[month].seen)||data[month]||[];
+      if(Array.isArray(seen)){
+        seen.forEach(p=>{
+          try{ window.CasaNostraMemoryProgress.markSeen(month,p); }catch(e){}
+        });
+      }
+    });
+
+    requestAnimationFrame(()=>{
+      try{
+        const m=document.querySelector('#monthWorld .solar-title strong')?.textContent?.trim().toLowerCase();
+        if(m && window.CasaNostraMemoryProgress.refresh){
+          window.CasaNostraMemoryProgress.refresh(m);
+        }
+      }catch(e){}
+    });
+  }catch(e){
+    console.warn('Restore progress failed',e);
+  }
+}
+document.addEventListener('DOMContentLoaded',restore);
+window.addEventListener('pageshow',restore);
+})();
+</script>
+
 </body></html>
