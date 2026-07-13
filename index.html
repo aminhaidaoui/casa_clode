@@ -619,6 +619,30 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 @media(max-width:650px){.cn-milestone-toast{font-size:13px}}
 </style>
 
+
+<style id="v38-memory-reveal-style">
+.secret-star.v38-opening{
+  animation:v38StarOpen .32s ease-out forwards !important;
+}
+@keyframes v38StarOpen{
+  0%{transform:translate(-50%,-50%) scale(1);filter:brightness(1)}
+  45%{transform:translate(-50%,-50%) scale(2.2);filter:brightness(2.2)}
+  100%{transform:translate(-50%,-50%) scale(1);filter:brightness(1)}
+}
+#v38Flash{
+ position:fixed;inset:0;
+ background:radial-gradient(circle at center,
+ rgba(255,255,255,.12),
+ rgba(10,8,20,.18) 45%,
+ rgba(0,0,0,.45));
+ opacity:0;
+ pointer-events:none;
+ z-index:9998;
+ transition:opacity .22s ease;
+}
+#v38Flash.on{opacity:1}
+</style>
+
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
@@ -1133,6 +1157,28 @@ window.addEventListener('pageshow',restore);
 </style>
 <script id="v37-3-galaxy-atmosphere-engine">
 (()=>{const t={febbraio:"Il cielo del nostro inizio ✨",marzo:"Ogni stella racconta un passo insieme 💙",aprile:"Dove i sogni hanno iniziato a prendere forma 💜",maggio:"Un cielo sempre più luminoso 💛",giugno:"Sempre più vicini al nostro infinito 💎",luglio:"Questo cielo non è ancora completo... ❤️"};function a(){const w=document.getElementById("monthWorld");if(!w)return;const m=(document.querySelector("#monthWorld .solar-title strong")?.textContent||"").trim().toLowerCase();if(!m)return;w.dataset.month=m;let d=document.getElementById("v37MonthTitle");if(!d){d=document.createElement("div");d.id="v37MonthTitle";d.className="v37-month-title";w.appendChild(d)}d.textContent=t[m]||""}document.addEventListener("click",e=>{if(e.target.closest(".galaxy"))setTimeout(a,250)},true);setTimeout(a,700)})();
+</script>
+
+
+<script id="v38-memory-reveal-engine">
+(()=>{
+ let flash=document.getElementById("v38Flash");
+ if(!flash){
+   flash=document.createElement("div");
+   flash.id="v38Flash";
+   document.body.appendChild(flash);
+ }
+ document.addEventListener("click",e=>{
+   const star=e.target.closest("#monthWorld .secret-star");
+   if(!star) return;
+   star.classList.add("v38-opening");
+   flash.classList.add("on");
+   setTimeout(()=>{
+      flash.classList.remove("on");
+      star.classList.remove("v38-opening");
+   },260);
+ },true);
+})();
 </script>
 
 </body></html>
