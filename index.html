@@ -866,7 +866,7 @@ const L=["Non ancora, devi aspettare. 🔒","Camilla no. Ti vedo. Non è ancora 
 "Ti amo, ma no. Aspetta.","Quasi quasi lo apro… no, scherzavo. 😌","Accesso negato alla patatina troppo curiosa.","Ultimo avviso: vai a bere un po’ d’acqua e torna dopo. ❤️"];
 let t=document.createElement('div');t.className='v21-lock-msg';document.body.appendChild(t);let last=-1,to;
 function msg(){let i;do{i=Math.floor(Math.random()*L.length)}while(i===last);last=i;t.textContent=L[i];t.classList.add('show');clearTimeout(to);to=setTimeout(()=>t.classList.remove('show'),2600)}
-document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[data-lock],.locked');if(q&&Date.now()<target){e.preventDefault();msg()}},true);
+document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[data-lock],.locked');if(q&&q.id!=='distanceRoom'&&Date.now()<target){e.preventDefault();msg()}},true);
 })();
 </script>
 
