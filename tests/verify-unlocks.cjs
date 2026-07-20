@@ -36,6 +36,11 @@ check(html.includes('const VIDEO_AT=Date.UTC(2026,6,20,12,0,0)'), 'Soglia video 
 check(html.includes('const LETTER_AT=Date.UTC(2026,6,20,12,15,0)'), 'Soglia lettera non numerica o errata');
 check(/<video[^>]*\bcontrols\b[^>]*\bplaysinline\b/i.test(html), 'Il video deve avere controls e playsinline');
 check(!/<video[^>]*\bautoplay\b/i.test(html), 'Il video non deve avere autoplay');
+check(/<audio[^>]*\bid="siteSoundtrack"[^>]*\bloop\b/i.test(html), 'La musica di sottofondo deve essere in loop');
+check(!/<audio[^>]*\bautoplay\b/i.test(html), 'La musica non deve avere autoplay');
+check(html.includes("enterButton.addEventListener('click'"), 'Avvio della musica dal gesto di ingresso assente');
+check(html.includes("event.target instanceof HTMLVideoElement"), 'Dissolvenza della musica durante i video assente');
+check(!html.includes("document.querySelectorAll('video,audio')"), 'La chiusura dei ricordi non deve fermare la musica globale');
 check(html.includes('setInterval(()=>updateRoom(Date.now()),1000)'), 'Aggiornamento automatico senza reload assente');
 check(html.includes('@media(max-width:650px)'), 'Breakpoint smartphone assente');
 
@@ -43,13 +48,14 @@ const requiredAssets = [
   'assets/sorpresa/video-introduttivo.mp4',
   'assets/sorpresa/video-introduttivo-poster.jpg',
   'assets/sorpresa/lettera-per-te-amore-mio.pdf',
+  'assets/audio/poetica.mp3',
   ...Array.from({length: 5}, (_, index) => `assets/sorpresa/lettera-pagina-${index + 1}.png`)
 ];
 requiredAssets.forEach(relativePath => {
   const absolutePath = path.join(root, ...relativePath.split('/'));
   check(fs.existsSync(absolutePath) && fs.statSync(absolutePath).size > 0, `Risorsa mancante o vuota: ${relativePath}`);
 });
-requiredAssets.slice(0, 3).forEach(relativePath => check(html.includes(relativePath), `Riferimento HTML mancante: ${relativePath}`));
+requiredAssets.slice(0, 4).forEach(relativePath => check(html.includes(relativePath), `Riferimento HTML mancante: ${relativePath}`));
 check(html.includes('assets/sorpresa/lettera-pagina-${page}.png'), 'Riferimento dinamico alle pagine della lettera mancante');
 
 if (failures.length) {
