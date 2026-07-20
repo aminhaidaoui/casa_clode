@@ -655,6 +655,48 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 .locked-room.is-open:hover{transform:none}
 </style>
 
+<style id="v40-sorpresa-20-luglio">
+.surprise-section{padding-top:56px;padding-bottom:104px}
+.locked-room.surprise-room{
+ width:min(960px,100%);min-height:520px;padding:clamp(28px,5vw,58px);
+ border-radius:clamp(32px,7vw,92px) clamp(32px,7vw,92px) 30px 30px;
+ background:
+  radial-gradient(circle at 50% 0,rgba(255,255,255,.92),transparent 38%),
+  linear-gradient(145deg,rgba(234,213,216,.96),rgba(255,248,243,.96));
+ box-shadow:0 28px 80px rgba(57,75,87,.18);cursor:default
+}
+.locked-room.surprise-room:hover{transform:none;box-shadow:0 28px 80px rgba(57,75,87,.18)}
+.surprise-room>div{width:100%}.surprise-lock{max-width:680px;margin:auto}
+.surprise-lock .lockmark{animation:surpriseLockBreath 2.8s ease-in-out infinite}
+.surprise-time-label{margin:.8rem 0 0;font:italic .95rem/1.6 Georgia,serif;color:#6f5961}
+.surprise-room .v21-countdown{margin:26px auto 10px}
+.surprise-room .v21-countdown .box{min-width:76px;background:rgba(255,255,255,.72)}
+.surprise-stage{animation:surpriseFadeUp .75s ease both}
+.surprise-stage h2{margin:.25em 0 .35em}
+.surprise-video-frame{position:relative;width:min(820px,100%);margin:28px auto 0;padding:10px;border-radius:26px;background:rgba(255,255,255,.72);box-shadow:0 24px 60px rgba(62,45,52,.16)}
+.surprise-video-frame video{display:block;width:100%;height:auto;max-height:72dvh;aspect-ratio:832/464;object-fit:contain;border-radius:18px;background:#080808}
+.letter-gate{width:min(820px,100%);margin:28px auto 0;padding:24px;border:1px solid rgba(122,78,94,.16);border-radius:24px;background:rgba(255,255,255,.56);transition:.6s}
+.letter-gate .mini-lock{font-size:1.35rem;margin-bottom:6px}.letter-gate h3{font-size:clamp(1.65rem,4vw,2.35rem);margin:.2em 0}
+.letter-gate .countdown{font-size:clamp(1rem,3vw,1.45rem);margin:.7em 0 0}
+.letter-reveal{width:100%;margin:36px auto 0;animation:letterBloom .95s cubic-bezier(.2,.8,.2,1) both}
+.letter-heading{width:min(760px,100%);margin:0 auto 24px;text-align:center}
+.letter-heading h3{font-size:clamp(2rem,5vw,3.5rem);margin:.25em 0;color:var(--cherry)}
+.letter-heading .muted{max-width:610px;margin:0 auto}.letter-pdf-link{display:inline-flex;align-items:center;gap:8px;margin-top:18px;text-decoration:none}
+.letter-pages{display:grid;gap:22px;width:min(760px,100%);margin:0 auto}
+.letter-page{margin:0;padding:clamp(7px,1.5vw,12px);border-radius:18px;background:rgba(255,255,255,.78);box-shadow:0 20px 55px rgba(68,47,39,.16)}
+.letter-page img{display:block;width:100%;height:auto;border-radius:11px;background:#f4dfad}
+@keyframes surpriseLockBreath{50%{transform:translateY(-3px) scale(1.05);filter:drop-shadow(0 8px 12px rgba(157,70,87,.18))}}
+@keyframes surpriseFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes letterBloom{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:650px){
+ .surprise-section{padding:42px 14px 72px}.locked-room.surprise-room{min-height:470px;padding:30px 14px;border-radius:42px 42px 24px 24px}
+ .surprise-room .v21-countdown{gap:6px}.surprise-room .v21-countdown .box{min-width:62px;padding:10px 6px}
+ .surprise-room .v21-countdown b{font-size:1.25rem}.surprise-video-frame{padding:6px;border-radius:18px}.surprise-video-frame video{border-radius:13px;max-height:66dvh}
+ .letter-gate{padding:20px 14px}.letter-pages{gap:14px}.letter-page{border-radius:13px}.letter-page img{border-radius:8px}
+}
+@media(prefers-reduced-motion:reduce){.surprise-lock .lockmark,.surprise-stage,.letter-reveal{animation:none!important}}
+</style>
+
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
@@ -682,7 +724,7 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 <button class="v21-mood" data-v21m="ansiosa"><span class="ico">🫧</span><span class="txt">sono in ansia</span></button>
 <button class="v21-mood" data-v21m="coccole"><span class="ico">🧸</span><span class="txt">voglio le coccole</span></button>
 </div><div class="v21-mood-answer" id="v21MoodAnswer">Qualunque cosa scegli, io resto qui. ♡</div></section>
-<section class="section"><div id="distanceRoom" class="locked-room"><div><p class="ey">anche da lontano</p><h2>questa stanza<br>non è ancora pronta</h2><div class="lockmark"><div class="v21-countdown" id="v21Countdown">
+<section class="section surprise-section" id="sorpresa"><div id="distanceRoom" class="locked-room surprise-room" aria-live="polite"><div><p class="ey">anche da lontano</p><h2>questa stanza<br>non è ancora pronta</h2><div class="lockmark"><div class="v21-countdown" id="v21Countdown">
 <div class="box"><b id="v21d">--</b><span>giorni</span></div><div class="box"><b id="v21h">--</b><span>ore</span></div>
 <div class="box"><b id="v21m">--</b><span>minuti</span></div><div class="box"><b id="v21s">--</b><span>secondi</span></div></div>🔒</div><p class="muted">si aprirà quando arriverà il suo momento</p><p id="roomCountdown" class="countdown"></p></div></div></section>
 
@@ -795,26 +837,96 @@ function openMystery(kind,g,i){
  modal.classList.remove('hidden');
 }
 
-const OPEN_AT=new Date('2026-07-20T14:30:00+02:00');
-function enterDistanceRoom(){
- distanceRoom.classList.add('is-open');
- distanceRoom.innerHTML='<div><p class="ey">la stanza è aperta</p><h2>da qui in poi,<br>un giorno alla volta.</h2><p class="muted">Non è la fine del viaggio. È uno spazio da continuare a riempire insieme. ♡</p></div>';
+/* 20 luglio 2026: 14:00 e 14:15 in Europe/Rome (CEST, UTC+02:00).
+   Le soglie sono costruite con componenti numerici UTC: nessuna data-stringa
+   viene affidata all'interpretazione, variabile, del browser. */
+const ROME_TIME_ZONE='Europe/Rome';
+const VIDEO_AT=Date.UTC(2026,6,20,12,0,0);
+const LETTER_AT=Date.UTC(2026,6,20,12,15,0);
+const distanceRoomEl=document.getElementById('distanceRoom');
+let roomStage='';
+
+function unlockStateAt(timestamp){
+ if(timestamp<VIDEO_AT)return 'locked';
+ if(timestamp<LETTER_AT)return 'video';
+ return 'letter';
 }
-function unlockDistanceRoom(){
- if(distanceRoom.dataset.unlocked==='true')return;
- distanceRoom.dataset.unlocked='true';
- distanceRoom.classList.add('is-open');
- distanceRoom.innerHTML='<div><p class="ey">anche da lontano</p><h2>adesso puoi entrare ♡</h2><p class="muted">da qui in poi, un giorno alla volta.</p><button class="pill" id="openDistanceRoom">apri la stanza</button></div>';
- document.getElementById('openDistanceRoom')?.addEventListener('click',enterDistanceRoom);
+function countdownParts(milliseconds){
+ const value=Math.max(0,Math.floor(milliseconds/1000));
+ return {days:Math.floor(value/86400),hours:Math.floor(value%86400/3600),minutes:Math.floor(value%3600/60),seconds:value%60};
 }
-function updateRoom(){
- const diff=OPEN_AT-Date.now();
- if(diff>0){
-  const d=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),m=Math.floor(diff%3600000/60000);
-  if(roomCountdown)roomCountdown.textContent=d+' giorni · '+h+' ore · '+m+' minuti';
- }else unlockDistanceRoom();
+function countdownMarkup(target,idPrefix){
+ const p=countdownParts(target-Date.now());
+ return `<div class="v21-countdown" aria-label="conto alla rovescia">
+  <div class="box"><b id="${idPrefix}d">${String(p.days).padStart(2,'0')}</b><span>giorni</span></div>
+  <div class="box"><b id="${idPrefix}h">${String(p.hours).padStart(2,'0')}</b><span>ore</span></div>
+  <div class="box"><b id="${idPrefix}m">${String(p.minutes).padStart(2,'0')}</b><span>minuti</span></div>
+  <div class="box"><b id="${idPrefix}s">${String(p.seconds).padStart(2,'0')}</b><span>secondi</span></div>
+ </div>`;
 }
-updateRoom();setInterval(updateRoom,60000);
+function setCountdown(prefix,target,nowMs){
+ const p=countdownParts(target-nowMs);
+ [['d',p.days],['h',p.hours],['m',p.minutes],['s',p.seconds]].forEach(([suffix,value])=>{
+  const el=document.getElementById(prefix+suffix);if(el)el.textContent=String(value).padStart(2,'0');
+ });
+}
+function romeScheduleLabel(timestamp){
+ return new Intl.DateTimeFormat('it-IT',{timeZone:ROME_TIME_ZONE,day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(timestamp));
+}
+function renderLocked(nowMs){
+ distanceRoomEl.dataset.state='locked';distanceRoomEl.classList.remove('is-open');
+ distanceRoomEl.innerHTML=`<div class="surprise-lock surprise-stage">
+  <p class="ey">una sorpresa per te</p><h2>questa stanza<br>si aprirà presto</h2>
+  <div class="lockmark">♡&nbsp; 🔒 &nbsp;♡</div>${countdownMarkup(VIDEO_AT,'videoCountdown')}
+  <p class="surprise-time-label">fino al ${romeScheduleLabel(VIDEO_AT)} · Europe/Rome</p>
+  <p class="muted">Lasciale ancora qualche battito. Comparirà da sola, senza ricaricare la pagina.</p>
+ </div>`;
+ setCountdown('videoCountdown',VIDEO_AT,nowMs);
+}
+function videoShellMarkup(){
+ return `<div class="surprise-stage">
+  <p class="ey">20 luglio · per te</p><h2>adesso puoi entrare ♡</h2>
+  <p class="muted">Premi play quando vuoi. Il suono partirà soltanto con il tuo gesto.</p>
+  <div class="surprise-video-frame"><video id="introSurpriseVideo" controls playsinline preload="metadata" poster="assets/sorpresa/video-introduttivo-poster.jpg">
+   <source src="assets/sorpresa/video-introduttivo.mp4" type="video/mp4">Il tuo browser non riesce a riprodurre il video.
+  </video></div>
+  <div id="letterGate" class="letter-gate" aria-live="polite"></div>
+ </div>`;
+}
+function renderLetterGate(nowMs){
+ const gate=document.getElementById('letterGate');if(!gate)return;
+ gate.innerHTML=`<div class="mini-lock">💌</div><p class="ey">la lettera</p><h3>ancora qualche minuto…</h3>
+  ${countdownMarkup(LETTER_AT,'letterCountdown')}
+  <p class="countdown">si aprirà alle 14:15</p>`;
+ setCountdown('letterCountdown',LETTER_AT,nowMs);
+}
+function revealLetter(){
+ const gate=document.getElementById('letterGate');if(!gate||gate.dataset.revealed==='true')return;
+ gate.dataset.revealed='true';gate.className='letter-reveal';
+ gate.innerHTML=`<div class="letter-heading"><p class="ey">la lettera · ora è tua</p><h3>Per te, amore mio</h3>
+  <p class="muted">Le pagine qui sotto sono riportate esattamente come sono state scritte.</p>
+  <a class="pill letter-pdf-link" href="assets/sorpresa/lettera-per-te-amore-mio.pdf" target="_blank" rel="noopener">apri il PDF originale ↗</a></div>
+  <div class="letter-pages" role="document" aria-label="Lettera Per te, amore mio, cinque pagine">
+   ${[1,2,3,4,5].map((page,index)=>`<figure class="letter-page"><img src="assets/sorpresa/lettera-pagina-${page}.png" alt="Lettera Per te, amore mio — pagina ${page} di 5" ${index?'loading="lazy"':''}></figure>`).join('')}
+  </div>`;
+}
+function updateRoom(nowMs=Date.now()){
+ const state=unlockStateAt(nowMs);
+ if(state==='locked'){
+  if(roomStage!=='locked'){renderLocked(nowMs);roomStage='locked'}
+  else setCountdown('videoCountdown',VIDEO_AT,nowMs);
+  return state;
+ }
+ if(roomStage==='locked'||!document.getElementById('introSurpriseVideo')){
+  distanceRoomEl.dataset.state=state;distanceRoomEl.classList.add('is-open');distanceRoomEl.innerHTML=videoShellMarkup();
+  renderLetterGate(nowMs);roomStage='video';
+ }
+ if(state==='video')setCountdown('letterCountdown',LETTER_AT,nowMs);
+ if(state==='letter'){revealLetter();distanceRoomEl.dataset.state='letter';roomStage='letter'}
+ return state;
+}
+window.CasaNostraUnlocks={ROME_TIME_ZONE,VIDEO_AT,LETTER_AT,stateAt:unlockStateAt,renderAt:updateRoom,resume:()=>updateRoom(Date.now())};
+updateRoom();setInterval(()=>updateRoom(Date.now()),1000);
 const lockedMessages=[
  'Camilla, aspetta… non è ancora pronto ♡',
  'Amorina, lo so che sei curiosa. Ancora un pochino.',
@@ -825,9 +937,9 @@ const lockedMessages=[
  'Cami, torna qui il 20 luglio. Ne varrà la pena ♡'
 ];
 let lockMsgIndex=0, whisperTimer;
-distanceRoom.addEventListener('click',()=>{
- if(new Date()>=OPEN_AT)return;
- distanceRoom.classList.remove('lock-shake'); void distanceRoom.offsetWidth; distanceRoom.classList.add('lock-shake');
+distanceRoomEl.addEventListener('click',()=>{
+ if(Date.now()>=VIDEO_AT)return;
+ distanceRoomEl.classList.remove('lock-shake'); void distanceRoomEl.offsetWidth; distanceRoomEl.classList.add('lock-shake');
  lockWhisper.textContent=lockedMessages[lockMsgIndex++%lockedMessages.length];
  lockWhisper.classList.add('show');
  clearTimeout(whisperTimer);whisperTimer=setTimeout(()=>lockWhisper.classList.remove('show'),2600);
@@ -855,7 +967,7 @@ triste:"Oggi non devi fare finta di stare bene. Vieni qui, anche solo virtualmen
 conme:"Eh no… questa è grave. Dimmi cosa ho combinato e poi provo a farmi perdonare. 😤❤️",nostalgica:"Apri una galassia e torna da noi per qualche minuto. Io sono già lì. 🌙",
 ansiosa:"Una cosa alla volta, patatina. Non devi sistemare tutto adesso. 🫧",coccole:"Richiesta ricevuta: abbraccio lungo e zero fretta appena possibile. 🧸"};
 document.querySelectorAll('.v21-mood').forEach(b=>b.onclick=()=>{const o=document.getElementById('v21MoodAnswer');if(o)o.textContent=R[b.dataset.v21m]});
-const target=new Date('2026-07-20T14:30:00+02:00').getTime();
+const target=Date.UTC(2026,6,20,12,0,0);
 function tick(){let x=target-Date.now(),ids=['v21d','v21h','v21m','v21s'];if(x<=0){ids.forEach(id=>{let e=document.getElementById(id);if(e)e.textContent='00'});return}
 let v=[Math.floor(x/86400000),String(Math.floor(x%86400000/3600000)).padStart(2,'0'),String(Math.floor(x%3600000/60000)).padStart(2,'0'),String(Math.floor(x%60000/1000)).padStart(2,'0')];
 ids.forEach((id,i)=>{let e=document.getElementById(id);if(e)e.textContent=v[i]})}tick();setInterval(tick,1000);
