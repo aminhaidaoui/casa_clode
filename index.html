@@ -697,6 +697,27 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 @media(prefers-reduced-motion:reduce){.surprise-lock .lockmark,.surprise-stage,.letter-reveal{animation:none!important}}
 </style>
 
+<style id="v41-background-music-style">
+.music-control{
+ position:fixed;right:18px;bottom:18px;z-index:2147483002;
+ display:flex;align-items:center;gap:9px;max-width:calc(100vw - 36px);
+ padding:11px 15px;border:1px solid rgba(255,255,255,.42);border-radius:999px;
+ background:rgba(39,54,64,.86);color:#f8fcfd;box-shadow:0 14px 38px rgba(24,38,47,.28);
+ -webkit-backdrop-filter:blur(14px) saturate(130%);backdrop-filter:blur(14px) saturate(130%);
+ cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;
+ transition:opacity .45s ease,transform .45s ease,background .25s ease
+}
+.music-control.visible{opacity:1;transform:none;pointer-events:auto}
+.music-control:hover{background:rgba(51,70,82,.94)}
+.music-control:focus-visible{outline:3px solid rgba(255,255,255,.82);outline-offset:3px}
+.music-control .music-icon{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.14);font-size:.82rem}
+.music-control .music-copy{display:grid;text-align:left;line-height:1.1}.music-control strong{font:400 .82rem Georgia,serif}.music-control small{margin-top:3px;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;opacity:.72}
+.music-control.is-playing .music-icon{animation:musicPulse 2.2s ease-in-out infinite}
+@keyframes musicPulse{50%{transform:scale(1.12);background:rgba(255,255,255,.25)}}
+@media(max-width:650px){.music-control{right:12px;bottom:12px;padding:10px 12px}.music-control strong{font-size:.76rem}.music-control small{font-size:.53rem}}
+@media(prefers-reduced-motion:reduce){.music-control,.music-control.is-playing .music-icon{transition:none;animation:none}}
+</style>
+
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
@@ -744,7 +765,7 @@ days.textContent=Math.max(0,Math.floor((now-new Date('2026-02-09T00:00:00'))/864
 todayDate.textContent=now.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'});
 
 function openPhoto(src,txt){mediaMount.innerHTML='<img id="mi" src="'+src+'" alt="ricordo">';mc.textContent=txt||'';modal.classList.remove('hidden')}
-function closeMemory(){modal.classList.add('hidden');mediaMount.innerHTML='';mc.textContent='';document.querySelectorAll('video,audio').forEach(m=>{try{m.pause();m.currentTime=0}catch(e){}})}
+function closeMemory(){modal.classList.add('hidden');mediaMount.querySelectorAll('video,audio').forEach(m=>{try{m.pause();m.currentTime=0}catch(e){}});mediaMount.innerHTML='';mc.textContent=''}
 function closeWorld(){closeMemory();monthWorld.classList.add('hidden');document.body.style.overflow=''}
 const closeBtn=document.getElementById('close');
 closeBtn.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();closeMemory()});
@@ -1335,6 +1356,70 @@ window.addEventListener('pageshow',restore);
   });
   if(nearest){e.preventDefault();nearest.click()}
  },{passive:false});
+})();
+</script>
+
+<audio id="siteSoundtrack" loop preload="metadata">
+ <source src="assets/audio/poetica.mp3" type="audio/mpeg">
+</audio>
+<button id="musicControl" class="music-control" type="button" aria-pressed="false" aria-label="Metti in pausa la musica">
+ <span class="music-icon" aria-hidden="true">♫</span>
+ <span class="music-copy"><strong>Poetica</strong><small id="musicState">musica spenta</small></span>
+</button>
+<script id="v41-background-music-engine">
+(()=>{
+ const soundtrack=document.getElementById('siteSoundtrack');
+ const control=document.getElementById('musicControl');
+ const stateLabel=document.getElementById('musicState');
+ const enterButton=document.getElementById('enter');
+ if(!soundtrack||!control||!stateLabel||!enterButton)return;
+
+ const NORMAL_VOLUME=.28,DUCKED_VOLUME=.055,PREFERENCE_KEY='casaNostraMusicV41';
+ let fadeTimer=null,userPaused=false;
+ try{userPaused=localStorage.getItem(PREFERENCE_KEY)==='paused'}catch(e){}
+
+ function setControlState(playing){
+  control.classList.toggle('is-playing',playing);
+  control.setAttribute('aria-pressed',String(playing));
+  control.setAttribute('aria-label',playing?'Metti in pausa la musica':'Riproduci la musica');
+  stateLabel.textContent=playing?'musica accesa':'musica spenta';
+ }
+ function remember(value){try{localStorage.setItem(PREFERENCE_KEY,value)}catch(e){}}
+ function fadeTo(target,duration=650){
+  clearInterval(fadeTimer);
+  const start=soundtrack.volume,steps=Math.max(1,Math.round(duration/50));let step=0;
+  fadeTimer=setInterval(()=>{
+   step+=1;soundtrack.volume=start+(target-start)*(step/steps);
+   if(step>=steps){soundtrack.volume=target;clearInterval(fadeTimer)}
+  },50);
+ }
+ async function playMusic(fromUser=false){
+  try{
+   soundtrack.volume=fromUser?Math.max(soundtrack.volume,.08):NORMAL_VOLUME;
+   await soundtrack.play();userPaused=false;remember('playing');setControlState(true);fadeTo(NORMAL_VOLUME,800);
+  }catch(e){setControlState(false)}
+ }
+ function pauseMusic(){
+  userPaused=true;remember('paused');clearInterval(fadeTimer);soundtrack.pause();setControlState(false);
+ }
+
+ enterButton.addEventListener('click',()=>{
+  control.classList.add('visible');
+  if(!userPaused)playMusic(true);else setControlState(false);
+ });
+ control.addEventListener('click',()=>soundtrack.paused?playMusic(true):pauseMusic());
+
+ document.addEventListener('play',event=>{
+  if(event.target instanceof HTMLVideoElement&&!soundtrack.paused)fadeTo(DUCKED_VOLUME,420);
+ },true);
+ function restoreAfterVideo(){
+  const anotherVideo=[...document.querySelectorAll('video')].some(video=>!video.paused&&!video.ended);
+  if(!anotherVideo&&!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,850);
+ }
+ document.addEventListener('pause',event=>{if(event.target instanceof HTMLVideoElement)restoreAfterVideo()},true);
+ document.addEventListener('ended',event=>{if(event.target instanceof HTMLVideoElement)restoreAfterVideo()},true);
+ soundtrack.addEventListener('play',()=>setControlState(true));
+ soundtrack.addEventListener('pause',()=>setControlState(false));
 })();
 </script>
 
