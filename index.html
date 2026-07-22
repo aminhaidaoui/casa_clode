@@ -1389,7 +1389,8 @@ window.addEventListener('pageshow',restore);
  const enterButton=document.getElementById('enter');
  if(!soundtrack||!control||!stateLabel||!enterButton)return;
 
- const NORMAL_VOLUME=.28,DUCKED_VOLUME=.055,PREFERENCE_KEY='casaNostraMusicV41';
+ // La musica resta accesa, ma durante voci e video diventa appena un sussurro.
+ const NORMAL_VOLUME=.28,DUCKED_VOLUME=.008,PREFERENCE_KEY='casaNostraMusicV41';
  let fadeTimer=null,userPaused=false;
  try{userPaused=localStorage.getItem(PREFERENCE_KEY)==='paused'}catch(e){}
 
@@ -1426,11 +1427,11 @@ window.addEventListener('pageshow',restore);
 
  document.addEventListener('play',event=>{
    const foregroundMedia=event.target instanceof HTMLVideoElement||(event.target instanceof HTMLAudioElement&&event.target!==soundtrack);
-   if(foregroundMedia&&!soundtrack.paused)fadeTo(DUCKED_VOLUME,420);
+   if(foregroundMedia&&!soundtrack.paused)fadeTo(DUCKED_VOLUME,240);
  },true);
  function restoreAfterForegroundMedia(){
    const anotherMedia=[...document.querySelectorAll('video'),...document.querySelectorAll('audio')].some(media=>media!==soundtrack&&!media.paused&&!media.ended);
-   if(!anotherMedia&&!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,850);
+   if(!anotherMedia&&!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,1100);
  }
  document.addEventListener('pause',event=>{if(event.target!==soundtrack&&(event.target instanceof HTMLVideoElement||event.target instanceof HTMLAudioElement))restoreAfterForegroundMedia()},true);
  document.addEventListener('ended',event=>{if(event.target!==soundtrack&&(event.target instanceof HTMLVideoElement||event.target instanceof HTMLAudioElement))restoreAfterForegroundMedia()},true);
