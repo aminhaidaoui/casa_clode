@@ -1391,7 +1391,8 @@ window.addEventListener('pageshow',restore);
 
  // La musica resta accesa, ma durante voci e video diventa appena un sussurro.
  const NORMAL_VOLUME=.28,DUCKED_VOLUME=.008,PREFERENCE_KEY='casaNostraMusicV41';
- let fadeTimer=null,userPaused=false;
+ let fadeTimer=null,userPaused=false,audioContext=null,musicSource=null,musicGain=null,recoveryTimer=null,recoveryAttempts=0;
+ const mixedMedia=new WeakMap();
  try{userPaused=localStorage.getItem(PREFERENCE_KEY)==='paused'}catch(e){}
 
  function setControlState(playing){
@@ -1401,8 +1402,36 @@ window.addEventListener('pageshow',restore);
   stateLabel.textContent=playing?'musica accesa':'musica spenta';
  }
  function remember(value){try{localStorage.setItem(PREFERENCE_KEY,value)}catch(e){}}
+ function ensureMixer(){
+  if(audioContext&&musicGain)return true;
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)return false;
+  try{
+   audioContext=new AudioContextClass();
+   musicSource=audioContext.createMediaElementSource(soundtrack);
+   musicGain=audioContext.createGain();
+   musicGain.gain.value=NORMAL_VOLUME;
+   musicSource.connect(musicGain).connect(audioContext.destination);
+   soundtrack.volume=1;
+   return true;
+  }catch(e){audioContext=null;musicSource=null;musicGain=null;return false}
+ }
+ function resumeMixer(){if(audioContext?.state==='suspended')audioContext.resume().catch(()=>{})}
+ function mixForeground(media){
+  if(!audioContext||mixedMedia.has(media))return;
+  try{
+   const source=audioContext.createMediaElementSource(media);
+   source.connect(audioContext.destination);
+   mixedMedia.set(media,source);
+  }catch(e){}
+ }
  function fadeTo(target,duration=650){
   clearInterval(fadeTimer);
+  if(musicGain&&audioContext){
+   const now=audioContext.currentTime,gain=musicGain.gain;
+   gain.cancelScheduledValues(now);gain.setValueAtTime(gain.value,now);gain.linearRampToValueAtTime(target,now+duration/1000);
+   return;
+  }
   const start=soundtrack.volume,steps=Math.max(1,Math.round(duration/50));let step=0;
   fadeTimer=setInterval(()=>{
    step+=1;soundtrack.volume=start+(target-start)*(step/steps);
@@ -1411,7 +1440,9 @@ window.addEventListener('pageshow',restore);
  }
  async function playMusic(fromUser=false){
   try{
-   soundtrack.volume=fromUser?Math.max(soundtrack.volume,.08):NORMAL_VOLUME;
+   ensureMixer();resumeMixer();
+   if(musicGain)musicGain.gain.value=fromUser?Math.max(musicGain.gain.value,.08):NORMAL_VOLUME;
+   else soundtrack.volume=fromUser?Math.max(soundtrack.volume,.08):NORMAL_VOLUME;
    await soundtrack.play();userPaused=false;remember('playing');setControlState(true);fadeTo(NORMAL_VOLUME,800);
   }catch(e){setControlState(false)}
  }
@@ -1427,16 +1458,30 @@ window.addEventListener('pageshow',restore);
 
  document.addEventListener('play',event=>{
    const foregroundMedia=event.target instanceof HTMLVideoElement||(event.target instanceof HTMLAudioElement&&event.target!==soundtrack);
-   if(foregroundMedia&&!soundtrack.paused)fadeTo(DUCKED_VOLUME,240);
- },true);
- function restoreAfterForegroundMedia(){
-   const anotherMedia=[...document.querySelectorAll('video'),...document.querySelectorAll('audio')].some(media=>media!==soundtrack&&!media.paused&&!media.ended);
-   if(!anotherMedia&&!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,1100);
+   if(!foregroundMedia)return;
+   ensureMixer();resumeMixer();mixForeground(event.target);recoveryAttempts=0;
+   if(!soundtrack.paused)fadeTo(DUCKED_VOLUME,240);
+   keepMusicUnderForeground();
+  },true);
+ function foregroundIsPlaying(){
+  return [...document.querySelectorAll('video'),...document.querySelectorAll('audio')].some(media=>media!==soundtrack&&!media.paused&&!media.ended);
  }
+ function keepMusicUnderForeground(){
+  clearTimeout(recoveryTimer);
+  recoveryTimer=setTimeout(async()=>{
+   if(userPaused||!foregroundIsPlaying()||!soundtrack.paused||recoveryAttempts>=2)return;
+   recoveryAttempts+=1;
+   try{resumeMixer();await soundtrack.play();setControlState(true);fadeTo(DUCKED_VOLUME,120)}catch(e){}
+  },160);
+ }
+ function restoreAfterForegroundMedia(){
+   const anotherMedia=foregroundIsPlaying();
+   if(!anotherMedia){recoveryAttempts=0;if(!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,1100)}
+  }
  document.addEventListener('pause',event=>{if(event.target!==soundtrack&&(event.target instanceof HTMLVideoElement||event.target instanceof HTMLAudioElement))restoreAfterForegroundMedia()},true);
  document.addEventListener('ended',event=>{if(event.target!==soundtrack&&(event.target instanceof HTMLVideoElement||event.target instanceof HTMLAudioElement))restoreAfterForegroundMedia()},true);
  soundtrack.addEventListener('play',()=>setControlState(true));
- soundtrack.addEventListener('pause',()=>setControlState(false));
+ soundtrack.addEventListener('pause',()=>{setControlState(false);if(!userPaused&&foregroundIsPlaying())keepMusicUnderForeground()});
 })();
 </script>
 
