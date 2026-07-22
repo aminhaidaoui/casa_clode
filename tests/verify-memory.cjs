@@ -32,8 +32,16 @@ check(html.includes("if(days>=3)return 'Mi sei mancata.'"), 'ritorno dopo più g
 check(html.includes('memory.totalAudioListens='), 'conteggio totale degli ascolti presente');
 check(html.includes('memory.favoriteCategory='), 'categoria preferita calcolata');
 check(html.includes('memory.lastAudio='), 'ultimo audio memorizzato');
+check(html.includes('dailyVoiceButton'), 'voce del giorno presente');
+check(html.includes('data-favorite-toggle'), 'preferiti audio presenti');
+check(html.includes('surpriseVoiceButton'), 'scelta sorpresa presente');
+check(html.includes('casa-nostra:night-mode'), 'modalita notte collegata alla musica');
+check(html.includes("serviceWorker.register('./sw.js')"), 'installazione app abilitata');
 check(html.includes("sessionStorage.setItem(SESSION_KEY,'open')"), 'apertura contata una volta per sessione');
 check(html.includes('if(counted.has(audio))return'), 'pausa e ripresa non duplicano l’ascolto');
+check(html.includes('DUCKED_VOLUME=.008'), 'musica ridotta a un sussurro durante gli audio');
+check(html.includes('createMediaElementSource(soundtrack)'), 'mixer audio mobile collegato alla musica');
+check(html.includes('mixForeground(event.target)'), 'voci e video collegati allo stesso mixer mobile');
 
 let total = 0;
 for (const [category, count] of Object.entries(expected)) {

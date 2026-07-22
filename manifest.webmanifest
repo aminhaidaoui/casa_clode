@@ -1,0 +1,16 @@
+{
+  "name": "Casa Nostra",
+  "short_name": "Casa Nostra",
+  "description": "Un posto che continua a vivere con noi.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f8f3ee",
+  "theme_color": "#9d4657",
+  "icons": [
+    {"src": "assets/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "assets/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
