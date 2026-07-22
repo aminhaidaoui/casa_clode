@@ -44,6 +44,11 @@ check(html.includes("showToast('Questa voce resta con te. ♡')"), 'conferma poe
 check(html.includes("playerShell?.classList.add('is-playing')"), 'audio attivo evidenziato');
 check(html.includes("window.scrollY>700"), 'pulsante torna all inizio presente');
 check(html.includes('const introSequence=returningHome?'), 'ingresso rapido per chi ritorna');
+check(html.includes('function rememberPosition(audio)'), 'posizione audio ricordata');
+check(html.includes('resumePosition&&audio'), 'ripresa audio dal punto salvato');
+check(html.includes("pendingWorker.postMessage({type:'SKIP_WAITING'})"), 'aggiornamento app controllato');
+check(html.includes("img.loading='lazy'"), 'immagini caricate solo quando servono');
+check(html.includes("Questo ricordo oggi non riesce a partire"), 'errore media comunicato con delicatezza');
 check(html.includes("serviceWorker.register('./sw.js')"), 'installazione app abilitata');
 check(html.includes("sessionStorage.setItem(SESSION_KEY,'open')"), 'apertura contata una volta per sessione');
 check(html.includes('if(counted.has(audio))return'), 'pausa e ripresa non duplicano l’ascolto');
