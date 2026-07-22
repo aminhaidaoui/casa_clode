@@ -39,6 +39,11 @@ check(html.includes('casa-nostra:night-mode'), 'modalita notte collegata alla mu
 check(html.includes('background:radial-gradient(circle at 50% 0,#342035,#100d14 58%)!important'), 'sfondo notte prevalente sui vecchi stili');
 check(html.includes('body.cn-night .v21-moods h2'), 'titoli leggibili in modalita notte');
 check(html.includes('body.cn-night .locked-room'), 'stanza finale leggibile in modalita notte');
+check(html.includes("return 'È tardi, resta qui un momento.'"), 'messaggio serale automatico presente');
+check(html.includes("showToast('Questa voce resta con te. ♡')"), 'conferma poetica dei preferiti presente');
+check(html.includes("playerShell?.classList.add('is-playing')"), 'audio attivo evidenziato');
+check(html.includes("window.scrollY>700"), 'pulsante torna all inizio presente');
+check(html.includes('const introSequence=returningHome?'), 'ingresso rapido per chi ritorna');
 check(html.includes("serviceWorker.register('./sw.js')"), 'installazione app abilitata');
 check(html.includes("sessionStorage.setItem(SESSION_KEY,'open')"), 'apertura contata una volta per sessione');
 check(html.includes('if(counted.has(audio))return'), 'pausa e ripresa non duplicano l’ascolto');
