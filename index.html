@@ -718,7 +718,15 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 @media(prefers-reduced-motion:reduce){.music-control,.music-control.is-playing .music-icon{transition:none;animation:none}}
 </style>
 
+<style id="v42-casa-memory-style">
+.cn-welcome{position:fixed;left:50%;top:24px;z-index:10020;width:min(560px,calc(100% - 32px));padding:18px 22px;border:1px solid rgba(255,255,255,.28);border-radius:22px;background:rgba(36,24,32,.92);color:#fff;text-align:center;box-shadow:0 18px 60px rgba(28,14,23,.28);backdrop-filter:blur(14px);opacity:0;transform:translate(-50%,-18px);pointer-events:none;transition:opacity .7s ease,transform .7s ease}.cn-welcome.on{opacity:1;transform:translate(-50%,0)}.cn-welcome strong{display:block;font:italic clamp(1.15rem,3vw,1.55rem)/1.3 Georgia,serif;font-weight:400}.cn-welcome small{display:block;margin-top:6px;color:#eadde3;font-size:.72rem;line-height:1.45;letter-spacing:.03em}
+.voice-refuge{padding-top:56px;padding-bottom:82px}.voice-refuge-head{max-width:720px;margin-bottom:28px}.voice-refuge-head h2{margin:.2em 0}.voice-memory-note{display:none;align-items:center;justify-content:space-between;gap:16px;margin:0 0 22px;padding:15px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(255,250,246,.7);color:var(--muted)}.voice-memory-note.on{display:flex}.voice-memory-note button,.mood-audio-suggestion{border:0;background:transparent;color:var(--cherry);font:italic .95rem Georgia,serif;cursor:pointer;text-decoration:underline;text-underline-offset:4px}.mood-audio-suggestion{display:none;margin:14px auto 0}.mood-audio-suggestion.on{display:block}.voice-categories{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.voice-category{position:relative;min-height:102px;padding:14px 10px;border:1px solid var(--line);border-radius:20px;background:var(--paper);color:var(--ink);text-align:center;cursor:pointer;transition:.25s}.voice-category:hover,.voice-category.active{transform:translateY(-3px);border-color:rgba(157,70,87,.35);box-shadow:0 15px 34px rgba(90,55,70,.09)}.voice-category .voice-icon{display:block;margin-bottom:7px;font-size:1.45rem}.voice-category .voice-label{display:block;font:1rem Georgia,serif}.voice-category .voice-favorite{display:block;min-height:1.2em;margin-top:6px;color:var(--cherry);font-size:.6rem;letter-spacing:.04em}.voice-player-shell{display:none;margin-top:18px;padding:clamp(22px,4vw,38px);border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,var(--paper),var(--blush));text-align:center}.voice-player-shell.on{display:block}.voice-player-shell h3{margin:.15em 0 .35em;font-size:clamp(1.7rem,4vw,2.5rem)}.voice-player-shell p{margin:.3em 0 20px;color:var(--muted)}.voice-player-shell audio{display:block;width:min(620px,100%);margin:0 auto}.voice-player-nav{display:flex;justify-content:center;gap:10px;margin-top:18px}.voice-player-nav button{border:1px solid var(--line);border-radius:999px;padding:10px 15px;background:#fff9;color:var(--ink);cursor:pointer}.voice-private{margin:18px 0 0!important;font-size:.72rem}
+@media(max-width:800px){.voice-categories{grid-template-columns:repeat(2,1fr)}.voice-memory-note{align-items:flex-start;flex-direction:column}.cn-welcome{top:14px}.voice-category{min-height:94px}}
+@media(prefers-reduced-motion:reduce){.cn-welcome,.voice-category{transition:none}}
+</style>
+
 </head><body><div id="v31Layer"><svg id="v31Svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"></svg></div><div id="v31Card"><b id="v31Title">Noi ✦</b><p id="v31Text"></p></div><div id="v31Pill"></div>
+<div id="casaMemoryWelcome" class="cn-welcome" role="status" aria-live="polite"><strong id="casaMemoryGreeting"></strong><small id="casaMemoryDetail"></small></div>
 
 <section id="intro"><div style="text-align:center"><div id="it"></div><button id="enter" class="pill">entra a casa nostra ❤️</button></div></section>
 <main>
@@ -744,7 +752,14 @@ window.CASA_NOSTRA_FULL_MEDIA={"febbraio": [["assets/febbraio/001_image.jpg", "i
 <button class="v21-mood" data-v21m="nostalgica"><span class="ico">🌙</span><span class="txt">sono nostalgica</span></button>
 <button class="v21-mood" data-v21m="ansiosa"><span class="ico">🫧</span><span class="txt">sono in ansia</span></button>
 <button class="v21-mood" data-v21m="coccole"><span class="ico">🧸</span><span class="txt">voglio le coccole</span></button>
-</div><div class="v21-mood-answer" id="v21MoodAnswer">Qualunque cosa scegli, io resto qui. ♡</div></section>
+</div><div class="v21-mood-answer" id="v21MoodAnswer">Qualunque cosa scegli, io resto qui. ♡</div><button id="moodAudioSuggestion" class="mood-audio-suggestion" type="button">ho una voce per questo momento</button></section>
+
+<section class="section voice-refuge" id="rifugioDiVoce">
+ <div class="voice-refuge-head"><p class="ey">quando hai bisogno di sentirmi vicino</p><h2>un rifugio<br><span class="accent">fatto di voce.</span></h2><p class="muted">Scegli come ti senti. Qui dentro c’è sempre qualcosa che ho lasciato per te.</p></div>
+ <div id="voiceMemoryNote" class="voice-memory-note"><span id="voiceMemoryText"></span><button id="resumeLastVoice" type="button">ritrovala</button></div>
+ <div id="voiceCategories" class="voice-categories" aria-label="Categorie dei messaggi vocali"></div>
+ <div id="voicePlayerShell" class="voice-player-shell" aria-live="polite"></div>
+</section>
 <section class="section surprise-section" id="sorpresa"><div id="distanceRoom" class="locked-room surprise-room" aria-live="polite"><div><p class="ey">anche da lontano</p><h2>questa stanza<br>non è ancora pronta</h2><div class="lockmark"><div class="v21-countdown" id="v21Countdown">
 <div class="box"><b id="v21d">--</b><span>giorni</span></div><div class="box"><b id="v21h">--</b><span>ore</span></div>
 <div class="box"><b id="v21m">--</b><span>minuti</span></div><div class="box"><b id="v21s">--</b><span>secondi</span></div></div>🔒</div><p class="muted">si aprirà quando arriverà il suo momento</p><p id="roomCountdown" class="countdown"></p></div></div></section>
@@ -1410,16 +1425,157 @@ window.addEventListener('pageshow',restore);
  control.addEventListener('click',()=>soundtrack.paused?playMusic(true):pauseMusic());
 
  document.addEventListener('play',event=>{
-  if(event.target instanceof HTMLVideoElement&&!soundtrack.paused)fadeTo(DUCKED_VOLUME,420);
+   const foregroundMedia=event.target instanceof HTMLVideoElement||(event.target instanceof HTMLAudioElement&&event.target!==soundtrack);
+   if(foregroundMedia&&!soundtrack.paused)fadeTo(DUCKED_VOLUME,420);
  },true);
- function restoreAfterVideo(){
-  const anotherVideo=[...document.querySelectorAll('video')].some(video=>!video.paused&&!video.ended);
-  if(!anotherVideo&&!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,850);
+ function restoreAfterForegroundMedia(){
+   const anotherMedia=[...document.querySelectorAll('video'),...document.querySelectorAll('audio')].some(media=>media!==soundtrack&&!media.paused&&!media.ended);
+   if(!anotherMedia&&!soundtrack.paused&&!userPaused)fadeTo(NORMAL_VOLUME,850);
  }
- document.addEventListener('pause',event=>{if(event.target instanceof HTMLVideoElement)restoreAfterVideo()},true);
- document.addEventListener('ended',event=>{if(event.target instanceof HTMLVideoElement)restoreAfterVideo()},true);
+ document.addEventListener('pause',event=>{if(event.target!==soundtrack&&(event.target instanceof HTMLVideoElement||event.target instanceof HTMLAudioElement))restoreAfterForegroundMedia()},true);
+ document.addEventListener('ended',event=>{if(event.target!==soundtrack&&(event.target instanceof HTMLVideoElement||event.target instanceof HTMLAudioElement))restoreAfterForegroundMedia()},true);
  soundtrack.addEventListener('play',()=>setControlState(true));
  soundtrack.addEventListener('pause',()=>setControlState(false));
+})();
+</script>
+
+<script id="v42-casa-memory-engine">
+(()=>{
+ const STORAGE_KEY='casaNostraMemoryV42';
+ const SESSION_KEY='casaNostraVisitV42';
+ const SESSION_GREETING_KEY='casaNostraGreetingV42';
+ const CATEGORIES=[
+  {id:'ansia',label:'Ansia',icon:'🫧',count:9,whisper:'quando il mondo corre troppo'},
+  {id:'coccole',label:'Coccole',icon:'🧸',count:10,whisper:'quando serve un abbraccio'},
+  {id:'cosi',label:'Così',icon:'☁️',count:10,whisper:'per quei giorni senza un nome'},
+  {id:'felice',label:'Felice',icon:'✨',count:10,whisper:'per sorridere insieme'},
+  {id:'incazzata',label:'Incazzata',icon:'🌋',count:10,whisper:'quando puoi dirmi proprio tutto'},
+  {id:'mi-sento-sola',label:'Mi sento sola',icon:'🌙',count:10,whisper:'quando la distanza si fa sentire'},
+  {id:'motivazione',label:'Motivazione',icon:'🌱',count:8,whisper:'quando devi ricordarti chi sei'},
+  {id:'nostalgia',label:'Nostalgia',icon:'💫',count:10,whisper:'quando vuoi tornare un po’ da noi'},
+  {id:'sto-bene',label:'Sto bene',icon:'☀️',count:10,whisper:'per custodire i giorni leggeri'},
+  {id:'triste',label:'Triste',icon:'🌧️',count:10,whisper:'quando non devi fingere niente'}
+ ];
+ const byId=id=>CATEGORIES.find(category=>category.id===id);
+ const emptyState=()=>({version:1,openCount:0,lastVisit:null,totalAudioListens:0,categoryCounts:{},favoriteCategory:null,lastAudio:null});
+ let memory=emptyState();
+ try{
+  const parsed=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+  if(parsed&&typeof parsed==='object')memory={...emptyState(),...parsed,categoryCounts:parsed.categoryCounts&&typeof parsed.categoryCounts==='object'?parsed.categoryCounts:{}};
+ }catch(error){memory=emptyState()}
+ function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(memory))}catch(error){}}
+ function romeDayNumber(timestamp){
+  const parts=new Intl.DateTimeFormat('en',{timeZone:'Europe/Rome',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(new Date(timestamp));
+  const value=type=>Number(parts.find(part=>part.type===type)?.value||0);
+  return Math.floor(Date.UTC(value('year'),value('month')-1,value('day'))/86400000);
+ }
+ function favoriteLine(){
+  const category=byId(memory.favoriteCategory);
+  if(!category||memory.totalAudioListens<3)return '';
+  return `La tua stanza più visitata è “${category.label}” — ${category.whisper}.`;
+ }
+ function chooseGreeting(previousVisit,wasFirst){
+  if(wasFirst)return 'Benvenuta a Casa Nostra, Mon bébé.';
+  if(!previousVisit)return 'Bentornata.';
+  const days=romeDayNumber(Date.now())-romeDayNumber(previousVisit);
+  if(days===1)return 'Bentornata.';
+  if(days>=3)return 'Mi sei mancata.';
+  if(days===2)return 'Che bello ritrovarti qui.';
+  return 'Casa nostra ti riconosce.';
+ }
+ let greeting='';
+ const previousVisit=memory.lastVisit;
+ const wasFirst=!memory.openCount;
+ try{greeting=sessionStorage.getItem(SESSION_GREETING_KEY)||''}catch(error){}
+ let isNewSession=true;
+ try{isNewSession=sessionStorage.getItem(SESSION_KEY)!=='open'}catch(error){}
+ if(isNewSession){
+  greeting=chooseGreeting(previousVisit,wasFirst);
+  memory.openCount=Math.max(0,Number(memory.openCount)||0)+1;
+  memory.lastVisit=new Date().toISOString();
+  save();
+  try{sessionStorage.setItem(SESSION_KEY,'open');sessionStorage.setItem(SESSION_GREETING_KEY,greeting)}catch(error){}
+ }
+ if(!greeting)greeting=chooseGreeting(previousVisit,wasFirst);
+
+ const welcome=document.getElementById('casaMemoryWelcome');
+ const greetingEl=document.getElementById('casaMemoryGreeting');
+ const detailEl=document.getElementById('casaMemoryDetail');
+ let welcomeTimer;
+ function showWelcome(){
+  if(!welcome||!greetingEl||!detailEl)return;
+  greetingEl.textContent=greeting;
+  detailEl.textContent=favoriteLine();
+  welcome.classList.add('on');
+  clearTimeout(welcomeTimer);
+  welcomeTimer=setTimeout(()=>welcome.classList.remove('on'),detailEl.textContent?5200:4200);
+ }
+ document.getElementById('enter')?.addEventListener('click',()=>setTimeout(showWelcome,520));
+
+ const categoriesEl=document.getElementById('voiceCategories');
+ const playerShell=document.getElementById('voicePlayerShell');
+ const memoryNote=document.getElementById('voiceMemoryNote');
+ const memoryText=document.getElementById('voiceMemoryText');
+ const resumeButton=document.getElementById('resumeLastVoice');
+ const suggestion=document.getElementById('moodAudioSuggestion');
+ let currentCategory=null,currentIndex=0;
+ function audioPath(category,index){return `assets/voci/${category.id}/audio-${String(index+1).padStart(2,'0')}.mp4`}
+ function updateMemoryNote(){
+  const last=memory.lastAudio,category=last&&byId(last.category);
+  if(!last||!category){memoryNote?.classList.remove('on');return}
+  if(memoryText)memoryText.textContent=`L’ultima voce che hai lasciato accesa era in “${category.label}”.`;
+  memoryNote?.classList.add('on');
+ }
+ function renderCategories(){
+  if(!categoriesEl)return;
+  categoriesEl.innerHTML=CATEGORIES.map(category=>`<button class="voice-category${currentCategory===category.id?' active':''}" type="button" data-voice-category="${category.id}" aria-pressed="${currentCategory===category.id}"><span class="voice-icon" aria-hidden="true">${category.icon}</span><span class="voice-label">${category.label}</span><span class="voice-favorite">${memory.favoriteCategory===category.id&&memory.totalAudioListens>=2?'qui torni più spesso':''}</span></button>`).join('');
+ }
+ function renderPlayer(category,index,shouldScroll=false){
+  if(!category||!playerShell)return;
+  currentCategory=category.id;
+  currentIndex=Math.max(0,Math.min(category.count-1,Number(index)||0));
+  playerShell.innerHTML=`<p class="ey">${category.icon} ${category.label}</p><h3>Messaggio ${currentIndex+1} di ${category.count}</h3><p>${category.whisper}.</p><audio class="cn-voice-audio" controls playsinline preload="metadata" data-category="${category.id}" data-index="${currentIndex}" data-title="Messaggio ${currentIndex+1}"><source src="${audioPath(category,currentIndex)}" type="audio/mp4"></audio><div class="voice-player-nav"><button type="button" data-voice-nav="prev" aria-label="Messaggio precedente">← prima</button><button type="button" data-voice-nav="random">scegline uno per me</button><button type="button" data-voice-nav="next" aria-label="Messaggio successivo">dopo →</button></div><p class="voice-private">Quello che ascolti rimane soltanto su questo dispositivo.</p>`;
+  playerShell.classList.add('on');
+  renderCategories();
+  if(shouldScroll)playerShell.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+ }
+ function openCategory(id,index=0,shouldScroll=true){const category=byId(id);if(category)renderPlayer(category,index,shouldScroll)}
+ categoriesEl?.addEventListener('click',event=>{const button=event.target.closest('[data-voice-category]');if(button)openCategory(button.dataset.voiceCategory,0,true)});
+ playerShell?.addEventListener('click',event=>{
+  const nav=event.target.closest('[data-voice-nav]');if(!nav||!currentCategory)return;
+  const category=byId(currentCategory);if(!category)return;
+  if(nav.dataset.voiceNav==='prev')currentIndex=(currentIndex-1+category.count)%category.count;
+  else if(nav.dataset.voiceNav==='next')currentIndex=(currentIndex+1)%category.count;
+  else{let next=currentIndex;while(category.count>1&&next===currentIndex)next=Math.floor(Math.random()*category.count);currentIndex=next}
+  renderPlayer(category,currentIndex,false);
+ });
+ resumeButton?.addEventListener('click',()=>{const last=memory.lastAudio;if(last)openCategory(last.category,last.index,true)});
+
+ const moodMap={bene:'sto-bene',felice:'felice',triste:'triste',incazzata:'incazzata',conme:'coccole',nostalgica:'nostalgia',ansiosa:'ansia',coccole:'coccole'};
+ document.querySelectorAll('.v21-mood').forEach(button=>button.addEventListener('click',()=>{
+  const id=moodMap[button.dataset.v21m];if(!id||!suggestion)return;
+  suggestion.dataset.category=id;suggestion.classList.add('on');
+ }));
+ suggestion?.addEventListener('click',()=>{const id=suggestion.dataset.category;if(id){openCategory(id,0,false);document.getElementById('rifugioDiVoce')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}});
+
+ const counted=new WeakSet();
+ document.addEventListener('play',event=>{
+  const audio=event.target;
+  if(!(audio instanceof HTMLAudioElement)||!audio.classList.contains('cn-voice-audio'))return;
+  document.querySelectorAll('.cn-voice-audio').forEach(other=>{if(other!==audio&&!other.paused)other.pause()});
+  if(counted.has(audio))return;
+  counted.add(audio);
+  const category=byId(audio.dataset.category);if(!category)return;
+  const index=Math.max(0,Number(audio.dataset.index)||0);
+  memory.totalAudioListens=Math.max(0,Number(memory.totalAudioListens)||0)+1;
+  memory.categoryCounts[category.id]=Math.max(0,Number(memory.categoryCounts[category.id])||0)+1;
+  memory.favoriteCategory=Object.entries(memory.categoryCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||category.id;
+  memory.lastAudio={id:`${category.id}-${index+1}`,title:audio.dataset.title||`Messaggio ${index+1}`,category:category.id,index,at:new Date().toISOString()};
+  save();renderCategories();updateMemoryNote();
+ },true);
+ document.addEventListener('ended',event=>{if(event.target instanceof HTMLAudioElement&&event.target.classList.contains('cn-voice-audio'))counted.delete(event.target)},true);
+ renderCategories();updateMemoryNote();
+ window.CasaNostraMemory={get:()=>JSON.parse(JSON.stringify(memory)),openCategory};
 })();
 </script>
 
