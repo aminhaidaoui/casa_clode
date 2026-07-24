@@ -47,6 +47,7 @@ export default {
           ? showCalendar(adminChatId(env), env)
           : showMenu(adminChatId(env), env, 'Pannello collegato correttamente.'),
       ]);
+      const lastUpdate = await env.DB.prepare('SELECT kind, command, authorized, received_at FROM webhook_diagnostics WHERE id = 1').first();
       return json({
         bot: { ok: identity.ok, username: identity.result?.username || null },
         webhook: {
@@ -55,7 +56,8 @@ export default {
           pending: webhook.result?.pending_update_count || 0,
           lastError: webhook.result?.last_error_message || null
         },
-        menu: { ok: menu.ok, description: menu.description || null }
+        menu: { ok: menu.ok, description: menu.description || null },
+        lastUpdate: lastUpdate || null
       });
     }
     if (url.pathname === '/telegram/webhook' && request.method === 'POST') {
@@ -77,7 +79,23 @@ async function handleUpdate(update, env) {
   const message = update.message;
   const callback = update.callback_query;
   const chatId = String(message?.chat?.id || callback?.message?.chat?.id || '');
-  if (!chatId || !safeEqual(chatId, adminChatId(env))) return;
+  const command = String(message?.text || callback?.data || '').slice(0, 80);
+  const authorized = Boolean(chatId && safeEqual(chatId, adminChatId(env)));
+  try {
+    await env.DB.prepare(`INSERT INTO webhook_diagnostics (id, chat_id, kind, command, authorized, received_at)
+      VALUES (1, ?, ?, ?, ?, datetime('now'))
+      ON CONFLICT(id) DO UPDATE SET chat_id = excluded.chat_id, kind = excluded.kind,
+      command = excluded.command, authorized = excluded.authorized, received_at = excluded.received_at`)
+      .bind(chatId, callback ? 'callback' : 'message', command, authorized ? 1 : 0).run();
+  } catch (error) {
+    console.error('Unable to record Telegram diagnostic', error);
+  }
+  if (!authorized) {
+    if (command === '/start' || command === '/menu') {
+      await sendTelegram(env, '⚠️ Ho ricevuto il comando, ma Telegram usa un identificativo diverso. Sto completando il collegamento sicuro.');
+    }
+    return;
+  }
 
   if (callback) {
     await telegram(env, 'answerCallbackQuery', { callback_query_id: callback.id });
