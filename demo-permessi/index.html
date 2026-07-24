@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Casa Nostra — Demo permessi</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #fff8f1;
+      --muted: #cebfc6;
+      --rose: #eaa5b6;
+      --panel: rgba(35, 22, 32, .88);
+      --line: rgba(255,255,255,.13);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font: 16px/1.55 system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 10%, #6b334c 0, transparent 34rem),
+        linear-gradient(145deg, #160e17, #261621 65%, #130d14);
+    }
+    main { width: min(720px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0; }
+    h1 { font-family: Georgia, serif; font-size: clamp(2rem, 8vw, 4rem); margin: 0; }
+    .lead { color: var(--muted); max-width: 58ch; }
+    .card {
+      margin-top: 24px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: 0 24px 70px rgba(0,0,0,.28);
+    }
+    .notice {
+      padding: 14px 16px;
+      border-left: 3px solid var(--rose);
+      background: rgba(234,165,182,.08);
+      color: var(--muted);
+    }
+    button {
+      min-height: 46px;
+      padding: 10px 17px;
+      margin: 6px 6px 6px 0;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #26131d;
+      background: var(--rose);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.secondary { color: var(--ink); background: transparent; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    video, canvas, img {
+      display: block;
+      width: 100%;
+      max-height: 440px;
+      margin-top: 16px;
+      border-radius: 18px;
+      background: #080608;
+      object-fit: cover;
+    }
+    [hidden] { display: none !important; }
+    .status { min-height: 1.5em; color: var(--muted); }
+    pre {
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      padding: 16px;
+      border-radius: 16px;
+      background: #100b10;
+      color: #f2dce3;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p>PROVA LOCALE E REVERSIBILE</p>
+    <h1>Casa Nostra</h1>
+    <p class="lead">Questa pagina mostra quali permessi vengono richiesti e quali dati sarebbero preparati per Telegram. Non invia nulla su Internet.</p>
+
+    <section class="card">
+      <h2>1. Entrata e posizione</h2>
+      <p class="notice">Premendo “Entra” autorizzi questa demo a chiedere la posizione. Se rifiuti, l’entrata viene comunque registrata soltanto con data e ora.</p>
+      <button id="enter">Entra a Casa Nostra ♡</button>
+      <p id="locationStatus" class="status" aria-live="polite"></p>
+    </section>
+
+    <section id="cameraCard" class="card" hidden>
+      <h2>2. Una fotografia volontaria</h2>
+      <p class="notice">La fotocamera richiede un permesso separato. La foto resta sul dispositivo finché non premi “Conferma invio”.</p>
+      <button id="front">Apri fotocamera frontale</button>
+      <button id="rear" class="secondary">Apri fotocamera posteriore</button>
+      <button id="stop" class="secondary" disabled>Chiudi fotocamera</button>
+      <video id="preview" autoplay muted playsinline hidden></video>
+      <button id="capture" disabled>Scatta foto</button>
+      <canvas id="canvas" hidden></canvas>
+      <img id="photo" alt="Anteprima della fotografia scattata" hidden>
+      <button id="confirm" disabled>Conferma invio simulato</button>
+      <button id="discard" class="secondary" disabled>Elimina foto</button>
+      <p id="cameraStatus" class="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>3. Anteprima del messaggio</h2>
+      <pre id="payload">Nessun dato preparato.</pre>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      enteredAt: null,
+      location: null,
+      locationPermission: "non richiesta",
+      cameraPermission: "non richiesta",
+      cameraFacing: null,
+      photoConfirmed: false
+    };
+
+    const $ = (id) => document.getElementById(id);
+    let stream = null;
+    let photoData = null;
+
+    function renderPayload() {
+      const output = {
+        evento: state.enteredAt ? "Ingresso a Casa Nostra" : "Nessun ingresso",
+        dataOra: state.enteredAt,
+        posizione: state.location,
+        permessoPosizione: state.locationPermission,
+        fotocamera: state.cameraFacing,
+        permessoFotocamera: state.cameraPermission,
+        fotoConfermata: state.photoConfirmed,
+        nota: "Demo locale: nessun dato è stato inviato"
+      };
+      $("payload").textContent = JSON.stringify(output, null, 2);
+    }
+
+    async function enterHome() {
+      state.enteredAt = new Intl.DateTimeFormat("it-IT", {
+        dateStyle: "full",
+        timeStyle: "medium"
+      }).format(new Date());
+      $("cameraCard").hidden = false;
+      $("locationStatus").textContent = "Ingresso registrato. Sto chiedendo il permesso per la posizione…";
+      renderPayload();
+
+      if (!navigator.geolocation) {
+        state.locationPermission = "non supportata";
+        $("locationStatus").textContent = "Posizione non supportata. Data e ora sono comunque disponibili.";
+        renderPayload();
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          state.locationPermission = "concessa";
+          state.location = {
+            latitudine: Number(position.coords.latitude.toFixed(4)),
+            longitudine: Number(position.coords.longitude.toFixed(4)),
+            precisioneMetri: Math.round(position.coords.accuracy)
+          };
+          $("locationStatus").textContent = "Posizione concessa. Nella demo è mostrata con precisione ridotta.";
+          renderPayload();
+        },
+        (error) => {
+          state.locationPermission = "rifiutata o non disponibile";
+          $("locationStatus").textContent = `Nessuna posizione ricevuta (${error.message}). Puoi comunque continuare.`;
+          renderPayload();
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      );
+    }
+
+    async function openCamera(facingMode) {
+      stopCamera();
+      $("cameraStatus").textContent = "Sto chiedendo il permesso per la fotocamera…";
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: facingMode } },
+          audio: false
+        });
+        state.cameraPermission = "concessa";
+        state.cameraFacing = facingMode === "user" ? "frontale" : "posteriore";
+        $("preview").srcObject = stream;
+        $("preview").hidden = false;
+        $("capture").disabled = false;
+        $("stop").disabled = false;
+        $("cameraStatus").textContent = `Fotocamera ${state.cameraFacing} attiva. Nessuna foto è stata ancora scattata.`;
+      } catch (error) {
+        state.cameraPermission = "rifiutata o non disponibile";
+        $("cameraStatus").textContent = `Fotocamera non disponibile: ${error.message}`;
+      }
+      renderPayload();
+    }
+
+    function stopCamera() {
+      if (stream) stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+      $("preview").srcObject = null;
+      $("preview").hidden = true;
+      $("capture").disabled = true;
+      $("stop").disabled = true;
+    }
+
+    function capturePhoto() {
+      const video = $("preview");
+      const canvas = $("canvas");
+      if (!video.videoWidth) return;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+      photoData = canvas.toDataURL("image/jpeg", 0.82);
+      $("photo").src = photoData;
+      $("photo").hidden = false;
+      $("confirm").disabled = false;
+      $("discard").disabled = false;
+      $("cameraStatus").textContent = "Foto scattata, ma non inviata. Controlla l’anteprima e scegli.";
+    }
+
+    function discardPhoto() {
+      photoData = null;
+      state.photoConfirmed = false;
+      $("photo").removeAttribute("src");
+      $("photo").hidden = true;
+      $("confirm").disabled = true;
+      $("discard").disabled = true;
+      $("cameraStatus").textContent = "Foto eliminata dal browser.";
+      renderPayload();
+    }
+
+    function confirmPhoto() {
+      if (!photoData) return;
+      state.photoConfirmed = true;
+      $("cameraStatus").textContent = "Invio simulato completato. In questa demo la foto non lascia il dispositivo.";
+      renderPayload();
+    }
+
+    $("enter").addEventListener("click", enterHome);
+    $("front").addEventListener("click", () => openCamera("user"));
+    $("rear").addEventListener("click", () => openCamera("environment"));
+    $("stop").addEventListener("click", stopCamera);
+    $("capture").addEventListener("click", capturePhoto);
+    $("discard").addEventListener("click", discardPhoto);
+    $("confirm").addEventListener("click", confirmPhoto);
+    window.addEventListener("pagehide", stopCamera);
+  </script>
+</body>
+</html>
