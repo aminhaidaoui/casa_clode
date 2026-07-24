@@ -826,7 +826,29 @@ const intros=['ti ricordi l’ultima volta che ti ho fatto entrare in un posto c
 let returningHome=false;try{returningHome=Boolean(localStorage.getItem('casaNostraMemoryV42'))}catch(error){}
 const introSequence=returningHome?[intros[intros.length-1]]:intros;
 (async()=>{for(const x of introSequence){it.classList.remove('on');await sleep(180);it.innerHTML=x;it.classList.add('on');await sleep(1250)}enter.classList.add('on')})();
-enter.onclick=()=>{intro.style.opacity=0;setTimeout(()=>intro?.remove(),500)};
+const TELEGRAM_ENTRY_ENDPOINT='https://casa-nostra-telegram.aminhaidaoui1.workers.dev/notify-entry';
+const TELEGRAM_ENTRY_SESSION_KEY='casaNostraTelegramEntryV1';
+let telegramEntrySent=false;
+function notifyTelegramEntry(){
+ if(telegramEntrySent)return;
+ try{
+  if(sessionStorage.getItem(TELEGRAM_ENTRY_SESSION_KEY)==='sent')return;
+  sessionStorage.setItem(TELEGRAM_ENTRY_SESSION_KEY,'sent');
+ }catch(error){}
+ telegramEntrySent=true;
+ fetch(TELEGRAM_ENTRY_ENDPOINT,{
+  method:'POST',
+  mode:'cors',
+  keepalive:true,
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({event:'enter'})
+ }).catch(()=>{});
+}
+enter.onclick=()=>{
+ notifyTelegramEntry();
+ intro.style.opacity=0;
+ setTimeout(()=>intro?.remove(),500);
+};
 let now=new Date();
 greet.textContent=now.getHours()<10?'buongiorno patatina':now.getHours()<18?'ciao patatina':'buonasera amorina';
 days.textContent=Math.max(0,Math.floor((now-new Date('2026-02-09T00:00:00'))/86400000))+' giorni di noi — e siamo solo all’inizio';
