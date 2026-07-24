@@ -35,6 +35,26 @@ export default {
       });
       return json(result, { status: result.ok ? 200 : 502 });
     }
+    if (url.pathname === '/admin/telegram-status' && request.method === 'POST') {
+      if (!safeEqual(request.headers.get('X-Casa-Setup'), env.SETUP_SECRET)) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      const [identity, webhook, menu] = await Promise.all([
+        telegram(env, 'getMe', {}),
+        telegram(env, 'getWebhookInfo', {}),
+        showMenu(adminChatId(env), env, 'Pannello collegato correttamente.'),
+      ]);
+      return json({
+        bot: { ok: identity.ok, username: identity.result?.username || null },
+        webhook: {
+          ok: webhook.ok,
+          url: webhook.result?.url || null,
+          pending: webhook.result?.pending_update_count || 0,
+          lastError: webhook.result?.last_error_message || null
+        },
+        menu: { ok: menu.ok, description: menu.description || null }
+      });
+    }
     if (url.pathname === '/telegram/webhook' && request.method === 'POST') {
       if (!safeEqual(request.headers.get('X-Telegram-Bot-Api-Secret-Token'), env.TELEGRAM_WEBHOOK_SECRET)) {
         return new Response('Forbidden', { status: 403 });
