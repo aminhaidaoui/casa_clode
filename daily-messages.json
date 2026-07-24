@@ -2,5 +2,24 @@
   "timezone": "Europe/Rome",
   "morningTime": "07:00",
   "nightTime": "23:30",
-  "messages": []
+  "messages": [
+    {
+      "id": "2026-07-25-night",
+      "date": "2026-07-25",
+      "kind": "night",
+      "title": "Buonanotte, amore mio",
+      "note": "Una piccola lettera da ascoltare prima di chiudere gli occhi.",
+      "video": "assets/daily/2026-07-25-night.mp4",
+      "poster": "assets/daily/2026-07-25-night-poster.jpg"
+    },
+    {
+      "id": "2026-08-15-morning",
+      "date": "2026-08-15",
+      "kind": "morning",
+      "title": "Buongiorno da lontano",
+      "note": "Un pensiero che ha aspettato Ferragosto per arrivare da te.",
+      "video": "assets/daily/2026-08-15-morning.mp4",
+      "poster": "assets/daily/2026-08-15-morning-poster.jpg"
+    }
+  ]
 }

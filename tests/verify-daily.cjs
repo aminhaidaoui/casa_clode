@@ -32,11 +32,19 @@ function zonedTimestamp(date, time) {
 check(config.timezone === 'Europe/Rome', 'fuso orario di Roma');
 check(config.morningTime === '07:00', 'buongiorno alle 07:00');
 check(config.nightTime === '23:30', 'buonanotte alle 23:30');
+check(config.messages.some(message => message.date === '2026-07-25' && message.kind === 'night'), 'buonanotte del 25 luglio programmata');
+check(config.messages.some(message => message.date === '2026-08-15' && message.kind === 'morning'), 'buongiorno di Ferragosto programmato');
 check(new Date(zonedTimestamp('2026-07-23', '23:30')).toISOString() === '2026-07-23T21:30:00.000Z', 'ora estiva calcolata correttamente');
 check(new Date(zonedTimestamp('2026-12-23', '23:30')).toISOString() === '2026-12-23T22:30:00.000Z', 'ora invernale calcolata correttamente');
 check(html.includes("fetch('./daily-messages.json',{cache:'no-store'})"), 'calendario aggiornato senza vecchia cache');
 check(html.includes("if(!isOpen){element.className='daily-moment is-locked'"), 'video futuro bloccato prima dell orario');
 check(html.includes('setupLetterCarousel()'), 'lettera orizzontale attivata');
 check(html.includes('scroll-snap-type:x mandatory'), 'scorrimento lettera ottimizzato per telefono');
+
+for (const message of config.messages) {
+  check(fs.existsSync(path.join(root, message.video)), `${message.id} video presente`);
+  check(fs.statSync(path.join(root, message.video)).size < 100 * 1024 * 1024, `${message.id} sotto il limite GitHub`);
+  check(fs.existsSync(path.join(root, message.poster)), `${message.id} copertina presente`);
+}
 
 process.exitCode = failures ? 1 : 0;
