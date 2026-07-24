@@ -39,10 +39,13 @@ export default {
       if (!safeEqual(request.headers.get('X-Casa-Setup'), env.SETUP_SECRET)) {
         return new Response('Forbidden', { status: 403 });
       }
+      const diagnosticAction = url.searchParams.get('action');
       const [identity, webhook, menu] = await Promise.all([
         telegram(env, 'getMe', {}),
         telegram(env, 'getWebhookInfo', {}),
-        showMenu(adminChatId(env), env, 'Pannello collegato correttamente.'),
+        diagnosticAction === 'calendar'
+          ? showCalendar(adminChatId(env), env)
+          : showMenu(adminChatId(env), env, 'Pannello collegato correttamente.'),
       ]);
       return json({
         bot: { ok: identity.ok, username: identity.result?.username || null },
@@ -60,7 +63,10 @@ export default {
         return new Response('Forbidden', { status: 403 });
       }
       const update = await request.json();
-      ctx.waitUntil(handleUpdate(update, env));
+      ctx.waitUntil(handleUpdate(update, env).catch(async error => {
+        console.error('Telegram update failed', error);
+        await sendTelegram(env, '⚠️ Il pannello ha incontrato un piccolo errore. Riprova con /menu.');
+      }));
       return json({ ok: true });
     }
     return new Response('Not found', { status: 404 });
@@ -363,11 +369,11 @@ function safeEqual(a, b) {
 }
 
 function botToken(env) {
-  return env.TELEGRAM_BOT_TOKEN || env.BOT_TOKEN || '';
+  return String(env.TELEGRAM_BOT_TOKEN || env.BOT_TOKEN || '').trim();
 }
 
 function adminChatId(env) {
-  return env.ADMIN_CHAT_ID || env.CHAT_ID || '';
+  return String(env.ADMIN_CHAT_ID || env.CHAT_ID || '').trim();
 }
 
 function romeNow() {
