@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "casa-nostra-telegram",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-24",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "PUBLIC_SITE_ORIGIN": "https://aminhaidaoui.github.io",
+    "PUBLIC_BASE_URL": "https://casa-nostra-telegram.aminhaidaoui1.workers.dev"
+  },
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "casa-nostra-media"
+    }
+  ]
+}
