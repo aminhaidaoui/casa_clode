@@ -222,10 +222,11 @@ async function publishDraft(chatId, env) {
 
 async function showCalendar(chatId, env) {
   const manifest = await readManifest(env);
-  const all = [...manifest.messages, ...manifest.surprises].sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
+  const timeFor = item => item.time || (item.kind === 'night' ? manifest.nightTime : item.kind === 'morning' ? manifest.morningTime : '00:00');
+  const all = [...manifest.messages, ...manifest.surprises].sort((a, b) => `${a.date}T${timeFor(a)}`.localeCompare(`${b.date}T${timeFor(b)}`));
   if (!all.length) return showMenu(chatId, env, 'Il calendario è vuoto.');
   const icons = { morning: '☀️', night: '🌙', surprise: '✨' };
-  const lines = all.slice(0, 30).map(item => `${icons[item.kind]} ${item.date} ${item.time} · ${item.title}`);
+  const lines = all.slice(0, 30).map(item => `${icons[item.kind]} ${item.date} ${timeFor(item)} · ${item.title}`);
   const keyboard = all.slice(0, 20).map(item => [{ text: `🗑 ${item.date} · ${item.title.slice(0, 24)}`, callback_data: `delete:${item.id}` }]);
   keyboard.push([{ text: '← Menu', callback_data: 'menu' }]);
   return send(chatId, `📅 Calendario Casa Nostra\n\n${lines.join('\n')}`, env, { inline_keyboard: keyboard });
