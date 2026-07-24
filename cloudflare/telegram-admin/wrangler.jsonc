@@ -15,5 +15,13 @@
       "binding": "MEDIA",
       "id": "3c0aed330f7c49198ec37e5e29b80bf1"
     }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "casa-nostra-admin",
+      "database_id": "5901c328-2eff-4ec4-a45c-0425d5aac9a4",
+      "migrations_dir": "migrations"
+    }
   ]
 }

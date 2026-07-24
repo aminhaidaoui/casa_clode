@@ -291,19 +291,20 @@ async function writeManifest(manifest, env) {
 }
 
 async function readState(chatId, env) {
-  const content = await env.MEDIA.get(`admin/state/${chatId}.json`);
-  if (!content) return null;
-  try { return JSON.parse(content); } catch { return null; }
+  const row = await env.DB.prepare('SELECT payload FROM admin_states WHERE chat_id = ?').bind(chatId).first();
+  if (!row?.payload) return null;
+  try { return JSON.parse(row.payload); } catch { return null; }
 }
 
 async function writeState(chatId, state, env) {
-  await env.MEDIA.put(`admin/state/${chatId}.json`, JSON.stringify(state), {
-    metadata: { private: true }
-  });
+  await env.DB.prepare(`INSERT INTO admin_states (chat_id, payload, updated_at)
+    VALUES (?, ?, datetime('now'))
+    ON CONFLICT(chat_id) DO UPDATE SET payload = excluded.payload, updated_at = excluded.updated_at`)
+    .bind(chatId, JSON.stringify(state)).run();
 }
 
 async function clearState(chatId, env) {
-  await env.MEDIA.delete(`admin/state/${chatId}.json`);
+  await env.DB.prepare('DELETE FROM admin_states WHERE chat_id = ?').bind(chatId).run();
 }
 
 async function serveMedia(key, env) {
