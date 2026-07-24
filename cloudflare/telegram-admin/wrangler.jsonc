@@ -10,10 +10,10 @@
     "PUBLIC_SITE_ORIGIN": "https://aminhaidaoui.github.io",
     "PUBLIC_BASE_URL": "https://casa-nostra-telegram.aminhaidaoui1.workers.dev"
   },
-  "r2_buckets": [
+  "kv_namespaces": [
     {
       "binding": "MEDIA",
-      "bucket_name": "casa-nostra-media"
+      "id": "3c0aed330f7c49198ec37e5e29b80bf1"
     }
   ]
 }

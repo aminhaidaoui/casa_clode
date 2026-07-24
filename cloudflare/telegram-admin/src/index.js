@@ -23,6 +23,18 @@ export default {
       ctx.waitUntil(sendTelegram(env, `💌 Qualcuno è entrato a Casa Nostra\n${romeNow()}`));
       return cors(json({ ok: true }), env);
     }
+    if (url.pathname === '/admin/setup-webhook' && request.method === 'POST') {
+      if (!safeEqual(request.headers.get('X-Casa-Setup'), env.SETUP_SECRET)) {
+        return new Response('Forbidden', { status: 403 });
+      }
+      const result = await telegram(env, 'setWebhook', {
+        url: `${env.PUBLIC_BASE_URL}/telegram/webhook`,
+        secret_token: env.TELEGRAM_WEBHOOK_SECRET,
+        allowed_updates: ['message', 'callback_query'],
+        drop_pending_updates: false
+      });
+      return json(result, { status: result.ok ? 200 : 502 });
+    }
     if (url.pathname === '/telegram/webhook' && request.method === 'POST') {
       if (!safeEqual(request.headers.get('X-Telegram-Bot-Api-Secret-Token'), env.TELEGRAM_WEBHOOK_SECRET)) {
         return new Response('Forbidden', { status: 403 });
@@ -39,7 +51,7 @@ async function handleUpdate(update, env) {
   const message = update.message;
   const callback = update.callback_query;
   const chatId = String(message?.chat?.id || callback?.message?.chat?.id || '');
-  if (!chatId || !safeEqual(chatId, env.ADMIN_CHAT_ID)) return;
+  if (!chatId || !safeEqual(chatId, adminChatId(env))) return;
 
   if (callback) {
     await telegram(env, 'answerCallbackQuery', { callback_query_id: callback.id });
@@ -142,12 +154,12 @@ function pickTelegramFile(message) {
 async function storeTelegramFile(file, draft, env) {
   const info = await telegram(env, 'getFile', { file_id: file.id });
   if (!info.ok) throw new Error('Telegram getFile failed');
-  const source = await fetch(`https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${info.result.file_path}`);
+  const source = await fetch(`https://api.telegram.org/file/bot${botToken(env)}/${info.result.file_path}`);
   if (!source.ok) throw new Error('Telegram file download failed');
   const extension = extensionFor(file.mime, file.name);
   const id = `${draft.date}-${draft.kind}-${crypto.randomUUID().slice(0, 8)}`;
   const key = `uploads/${id}.${extension}`;
-  await env.MEDIA.put(key, source.body, { httpMetadata: { contentType: file.mime } });
+  await env.MEDIA.put(key, source.body, { metadata: { contentType: file.mime } });
   return { key, type: file.type, mime: file.mime, url: `${env.PUBLIC_BASE_URL}/media/${encodeURIComponent(key)}` };
 }
 
@@ -243,12 +255,12 @@ async function send(chatId, text, env, replyMarkup) {
 }
 
 async function sendTelegram(env, text) {
-  if (!env.TELEGRAM_BOT_TOKEN || !env.ADMIN_CHAT_ID) return;
-  return send(env.ADMIN_CHAT_ID, text, env);
+  if (!botToken(env) || !adminChatId(env)) return;
+  return send(adminChatId(env), text, env);
 }
 
 async function telegram(env, method, body) {
-  const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/${method}`, {
+  const response = await fetch(`https://api.telegram.org/bot${botToken(env)}/${method}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
@@ -257,10 +269,10 @@ async function telegram(env, method, body) {
 }
 
 async function readManifest(env) {
-  const object = await env.MEDIA.get(MANIFEST_KEY);
-  if (!object) return structuredClone(DEFAULT_MANIFEST);
+  const content = await env.MEDIA.get(MANIFEST_KEY);
+  if (!content) return structuredClone(DEFAULT_MANIFEST);
   try {
-    const parsed = JSON.parse(await object.text());
+    const parsed = JSON.parse(content);
     return {
       ...structuredClone(DEFAULT_MANIFEST),
       ...parsed,
@@ -274,19 +286,19 @@ async function readManifest(env) {
 
 async function writeManifest(manifest, env) {
   await env.MEDIA.put(MANIFEST_KEY, JSON.stringify(manifest, null, 2), {
-    httpMetadata: { contentType: 'application/json; charset=utf-8' }
+    metadata: { contentType: 'application/json; charset=utf-8' }
   });
 }
 
 async function readState(chatId, env) {
-  const object = await env.MEDIA.get(`admin/state/${chatId}.json`);
-  if (!object) return null;
-  try { return JSON.parse(await object.text()); } catch { return null; }
+  const content = await env.MEDIA.get(`admin/state/${chatId}.json`);
+  if (!content) return null;
+  try { return JSON.parse(content); } catch { return null; }
 }
 
 async function writeState(chatId, state, env) {
   await env.MEDIA.put(`admin/state/${chatId}.json`, JSON.stringify(state), {
-    customMetadata: { private: 'true' }
+    metadata: { private: true }
   });
 }
 
@@ -295,14 +307,12 @@ async function clearState(chatId, env) {
 }
 
 async function serveMedia(key, env) {
-  const object = await env.MEDIA.get(decodeURIComponent(key));
-  if (!object) return new Response('Not found', { status: 404 });
-  const headers = new Headers();
-  object.writeHttpMetadata(headers);
-  headers.set('ETag', object.httpEtag);
+  const object = await env.MEDIA.getWithMetadata(decodeURIComponent(key), { type: 'stream' });
+  if (!object.value) return new Response('Not found', { status: 404 });
+  const headers = new Headers({ 'Content-Type': object.metadata?.contentType || 'application/octet-stream' });
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   headers.set('Access-Control-Allow-Origin', '*');
-  return new Response(object.body, { headers });
+  return new Response(object.value, { headers });
 }
 
 function cors(response, env) {
@@ -329,6 +339,14 @@ function safeEqual(a, b) {
   let result = 0;
   for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return result === 0;
+}
+
+function botToken(env) {
+  return env.TELEGRAM_BOT_TOKEN || env.BOT_TOKEN || '';
+}
+
+function adminChatId(env) {
+  return env.ADMIN_CHAT_ID || env.CHAT_ID || '';
 }
 
 function romeNow() {

@@ -12,17 +12,17 @@ Non inserirli mai nel repository:
 
 Vanno salvati con `wrangler secret put`.
 
-## Risorsa richiesta
+## Risorsa utilizzata
 
-- bucket R2 `casa-nostra-media`, collegato al binding `MEDIA`
+- namespace KV collegato al binding `MEDIA`
 
 ## Flusso di distribuzione
 
 1. `npx wrangler login`
-2. `npx wrangler r2 bucket create casa-nostra-media`
+2. creare il namespace KV `MEDIA` e inserirne l'id in `wrangler.jsonc`
 3. impostare i tre segreti
 4. `npx wrangler deploy`
 5. registrare il webhook Telegram su `/telegram/webhook` includendo il secret token
 
-Il Worker conserva manifest, bozze e allegati nel bucket. Soltanto `ADMIN_CHAT_ID`
+Il Worker conserva manifest, bozze e allegati nel namespace KV. Soltanto `ADMIN_CHAT_ID`
 può aprire il pannello; gli altri aggiornamenti Telegram vengono ignorati.
