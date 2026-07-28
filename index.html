@@ -810,10 +810,12 @@ body.cn-night .heroimg,body.cn-night .ph{filter:brightness(.68) saturate(.8)}bod
   <button id="favoritesButton" class="voice-tool" type="button" aria-expanded="false"><span>♡ preferiti</span><small id="favoritesCount">nessun cuore ancora</small></button>
   <button id="nightModeButton" class="voice-tool" type="button" aria-pressed="false"><span>☾ buonanotte</span><small>luci e musica più morbide</small></button>
   <button id="installAppButton" class="voice-tool" type="button"><span>⌂ porta Casa con te</span><small>aggiungila al telefono</small></button>
+  <button id="pushNotificationButton" class="voice-tool" type="button" aria-pressed="false"><span>🔔 avvisami</span><small>quando si apre qualcosa</small></button>
  </div>
  <div id="dailyVoiceCard" class="daily-voice-card"></div>
  <div id="favoritesPanel" class="favorites-panel"><p class="ey">le voci che hai tenuto con te</p><div id="favoritesList" class="favorites-list"></div></div>
  <div id="installNote" class="install-note" role="status"></div>
+ <div id="pushNotificationNote" class="install-note" role="status" aria-live="polite"></div>
  <div id="voiceCategories" class="voice-categories" aria-label="Categorie dei messaggi vocali"></div>
  <div id="voicePlayerShell" class="voice-player-shell" aria-live="polite"></div>
 </section>
@@ -1889,6 +1891,120 @@ window.addEventListener('casa-nostra:night-mode',event=>{ambientVolume=event.det
  document.addEventListener('error',event=>{if(event.target instanceof HTMLMediaElement){playerShell?.classList.remove('is-playing');showToast('Questo ricordo oggi non riesce a partire. Riprova tra poco.')}},true);
  renderCategories();renderFavorites();updateMemoryNote();
  window.CasaNostraMemory={get:()=>JSON.parse(JSON.stringify(memory)),openCategory};
+})();
+</script>
+
+<script id="casa-web-push">
+(()=>{
+ const API='https://casa-nostra-telegram.aminhaidaoui1.workers.dev';
+ const button=document.getElementById('pushNotificationButton');
+ const note=document.getElementById('pushNotificationNote');
+ if(!button||!note)return;
+
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const supported=()=>window.isSecureContext&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+ const showNote=(message,isError=false)=>{
+  note.textContent=message;
+  note.classList.add('on');
+  note.style.borderColor=isError?'rgba(157,70,87,.55)':'';
+ };
+ const base64urlToBytes=value=>{
+  const padded=value+'='.repeat((4-value.length%4)%4);
+  const binary=atob(padded.replace(/-/g,'+').replace(/_/g,'/'));
+  return Uint8Array.from(binary,char=>char.charCodeAt(0));
+ };
+ const setButtonState=active=>{
+  button.classList.toggle('active',active);
+  button.setAttribute('aria-pressed',String(active));
+  button.querySelector('span').textContent=active?'🔔 notifiche attive':'🔔 avvisami';
+  button.querySelector('small').textContent=active?'Casa Nostra può raggiungerti':'quando si apre qualcosa';
+ };
+ async function currentSubscription(){
+  if(!supported())return null;
+  const registration=await navigator.serviceWorker.ready;
+  return registration.pushManager.getSubscription();
+ }
+ async function registerSubscription(subscription){
+  const response=await fetch(`${API}/push/subscribe`,{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify(subscription.toJSON())
+  });
+  if(!response.ok)throw new Error('subscribe failed');
+ }
+ async function activate(){
+  if(!supported()){
+   showNote('Questo browser non supporta ancora le notifiche di Casa Nostra.',true);
+   return;
+  }
+  if(ios&&!standalone()){
+   showNote('Su iPhone: tocca Condividi, scegli “Aggiungi alla schermata Home”, poi apri Casa Nostra dalla nuova icona e premi di nuovo “Avvisami”.');
+   return;
+  }
+  const permission=await Notification.requestPermission();
+  if(permission!=='granted'){
+   showNote('Le notifiche non sono state autorizzate. Puoi riattivarle dalle impostazioni del telefono.',true);
+   return;
+  }
+  const registration=await navigator.serviceWorker.ready;
+  let subscription=await registration.pushManager.getSubscription();
+  if(!subscription){
+   const response=await fetch(`${API}/push/vapid-public-key`,{cache:'no-store'});
+   if(!response.ok)throw new Error('missing key');
+   const {publicKey}=await response.json();
+   if(!publicKey)throw new Error('missing key');
+   subscription=await registration.pushManager.subscribe({
+    userVisibleOnly:true,
+    applicationServerKey:base64urlToBytes(publicKey)
+   });
+  }
+  await registerSubscription(subscription);
+  setButtonState(true);
+  showNote('Notifiche attivate. Ti avviserò quando Casa Nostra avrà qualcosa di nuovo per te. 💗');
+  await registration.showNotification('Casa Nostra è con te 💗',{
+   body:'Le notifiche sono attive. Da ora non perderai più nessun momento.',
+   icon:'./assets/app/icon-192.png',
+   badge:'./assets/app/icon-192.png',
+   tag:'casa-nostra-welcome',
+   data:{url:location.href}
+  });
+ }
+ async function deactivate(subscription){
+  try{
+   await fetch(`${API}/push/unsubscribe`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({endpoint:subscription.endpoint})
+   });
+  }finally{
+   await subscription.unsubscribe();
+  }
+  setButtonState(false);
+  showNote('Notifiche disattivate. Casa Nostra resterà qui ad aspettarti.');
+ }
+ async function refresh(){
+  if(!supported()){
+   button.querySelector('small').textContent=ios?'aggiungi prima alla schermata Home':'non disponibile su questo browser';
+   return;
+  }
+  try{setButtonState(Boolean(await currentSubscription()))}catch{setButtonState(false)}
+ }
+ button.addEventListener('click',async()=>{
+  if(button.disabled)return;
+  button.disabled=true;
+  try{
+   const subscription=await currentSubscription();
+   if(subscription)await deactivate(subscription);
+   else await activate();
+  }catch(error){
+   console.error('Casa Nostra push error',error);
+   showNote('Non sono riuscita ad attivare le notifiche. Controlla la connessione e riprova.',true);
+  }finally{
+   button.disabled=false;
+  }
+ });
+ window.addEventListener('load',refresh,{once:true});
 })();
 </script>
 

@@ -3,13 +3,15 @@
   "name": "casa-nostra-telegram",
   "main": "src/index.js",
   "compatibility_date": "2026-07-24",
+  "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
   },
   "vars": {
     "PUBLIC_SITE_ORIGIN": "https://aminhaidaoui.github.io",
     "PUBLIC_BASE_URL": "https://casa-nostra-telegram.aminhaidaoui1.workers.dev",
-    "PUBLIC_SITE_URL": "https://aminhaidaoui.github.io/casa_clode/#pensieriDiOggi"
+    "PUBLIC_SITE_URL": "https://aminhaidaoui.github.io/casa_clode/#pensieriDiOggi",
+    "VAPID_SUBJECT": "https://aminhaidaoui.github.io/casa_clode/"
   },
   "triggers": {
     "crons": ["* * * * *"]

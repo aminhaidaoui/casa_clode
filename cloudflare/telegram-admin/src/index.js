@@ -1,3 +1,5 @@
+import webpush from 'web-push';
+
 const MANIFEST_KEY = 'content/manifest.json';
 const DEFAULT_MANIFEST = {
   timezone: 'Europe/Rome',
@@ -15,6 +17,15 @@ export default {
     if (url.pathname === '/health') return json({ ok: true, service: 'casa-nostra-telegram' });
     if (url.pathname === '/content' && request.method === 'GET') {
       return cors(json(await readManifest(env)), env);
+    }
+    if (url.pathname === '/push/vapid-public-key' && request.method === 'GET') {
+      return cors(json({ publicKey: String(env.VAPID_PUBLIC_KEY || '') }), env);
+    }
+    if (url.pathname === '/push/subscribe' && request.method === 'POST') {
+      return cors(await subscribeWebPush(request, env), env);
+    }
+    if (url.pathname === '/push/unsubscribe' && request.method === 'POST') {
+      return cors(await unsubscribeWebPush(request, env), env);
     }
     if (url.pathname.startsWith('/media/') && request.method === 'GET') {
       return serveMedia(url.pathname.slice('/media/'.length), env);
@@ -254,7 +265,15 @@ async function publishDraft(chatId, env) {
   collection.sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
   await writeManifest(manifest, env);
   await clearState(chatId, env);
-  await notifySubscribers(env, `💌 C'è un nuovo aggiornamento a Casa Nostra.\nUn pensiero è stato preparato per ${draft.date} alle ${draft.time}.\n\n${siteUrl(env)}`);
+  await Promise.all([
+    notifySubscribers(env, `💌 C'è un nuovo aggiornamento a Casa Nostra.\nUn pensiero è stato preparato per ${draft.date} alle ${draft.time}.\n\n${siteUrl(env)}`),
+    notifyWebPush(env, {
+      title: 'Casa Nostra si è aggiornata 💌',
+      body: 'C’è un nuovo pensiero che ti aspetterà al momento giusto.',
+      tag: `update-${id}`,
+      url: siteUrl(env)
+    })
+  ]);
   await send(chatId, `✅ Programmato!\n${draft.date} alle ${draft.time} · ${draft.title}`, env);
   return showMenu(chatId, env);
 }
@@ -310,6 +329,70 @@ async function showMenu(chatId, env, prefix = '') {
       [{ text: '🔔 Notifiche sul telefono', callback_data: 'notify:menu' }]
     ]
   });
+}
+
+async function subscribeWebPush(request, env) {
+  if (!isAllowedSiteRequest(request, env)) return json({ ok: false, error: 'Forbidden' }, { status: 403 });
+  let subscription;
+  try {
+    subscription = await request.json();
+  } catch {
+    return json({ ok: false, error: 'Invalid JSON' }, { status: 400 });
+  }
+  if (!isValidPushSubscription(subscription)) {
+    return json({ ok: false, error: 'Invalid subscription' }, { status: 400 });
+  }
+  const endpointHash = await sha256(subscription.endpoint);
+  await env.DB.prepare(`INSERT INTO web_push_subscriptions
+    (endpoint_hash, endpoint, p256dh, auth, created_at, updated_at)
+    VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
+    ON CONFLICT(endpoint_hash) DO UPDATE SET endpoint = excluded.endpoint,
+    p256dh = excluded.p256dh, auth = excluded.auth, updated_at = datetime('now')`)
+    .bind(endpointHash, subscription.endpoint, subscription.keys.p256dh, subscription.keys.auth).run();
+  return json({ ok: true });
+}
+
+async function unsubscribeWebPush(request, env) {
+  if (!isAllowedSiteRequest(request, env)) return json({ ok: false, error: 'Forbidden' }, { status: 403 });
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ ok: false, error: 'Invalid JSON' }, { status: 400 });
+  }
+  if (typeof body?.endpoint !== 'string' || body.endpoint.length > 2048) {
+    return json({ ok: false, error: 'Invalid endpoint' }, { status: 400 });
+  }
+  await env.DB.prepare('DELETE FROM web_push_subscriptions WHERE endpoint_hash = ?')
+    .bind(await sha256(body.endpoint)).run();
+  return json({ ok: true });
+}
+
+function isAllowedSiteRequest(request, env) {
+  const origin = request.headers.get('Origin');
+  return Boolean(origin && origin === String(env.PUBLIC_SITE_ORIGIN || ''));
+}
+
+function isValidPushSubscription(subscription) {
+  if (!subscription || typeof subscription !== 'object') return false;
+  if (typeof subscription.endpoint !== 'string' || subscription.endpoint.length > 2048) return false;
+  if (typeof subscription.keys?.p256dh !== 'string' || subscription.keys.p256dh.length > 256) return false;
+  if (typeof subscription.keys?.auth !== 'string' || subscription.keys.auth.length > 128) return false;
+  try {
+    const endpoint = new URL(subscription.endpoint);
+    if (endpoint.protocol !== 'https:') return false;
+    if (endpoint.hostname === 'localhost' || endpoint.hostname.endsWith('.local')) return false;
+  } catch {
+    return false;
+  }
+  return /^[A-Za-z0-9_-]+$/.test(subscription.keys.p256dh)
+    && /^[A-Za-z0-9_-]+$/.test(subscription.keys.auth);
+}
+
+async function sha256(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 async function showNotificationMenu(chatId, env, prefix = '') {
@@ -379,11 +462,50 @@ async function notifyUnlockedContent(env, scheduledTime) {
       surprise: '✨ Una sorpresa si è appena sbloccata'
     };
     const opening = messages[item.kind] || '💌 Un nuovo pensiero si è appena sbloccato';
-    await notifySubscribers(
-      env,
-      `${opening} a Casa Nostra.\nÈ qui che ti aspetta 💗\n\n${siteUrl(env)}`
-    );
+    await Promise.all([
+      notifySubscribers(
+        env,
+        `${opening} a Casa Nostra.\nÈ qui che ti aspetta 💗\n\n${siteUrl(env)}`
+      ),
+      notifyWebPush(env, {
+        title: 'Casa Nostra 💗',
+        body: `${opening}. È qui che ti aspetta.`,
+        tag: `unlock-${contentId}`,
+        url: siteUrl(env)
+      })
+    ]);
   }
+}
+
+async function notifyWebPush(env, payload) {
+  if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) {
+    console.error('Web Push skipped: VAPID keys are missing');
+    return;
+  }
+  webpush.setVapidDetails(
+    String(env.VAPID_SUBJECT || siteUrl(env)),
+    String(env.VAPID_PUBLIC_KEY),
+    String(env.VAPID_PRIVATE_KEY)
+  );
+  const { results = [] } = await env.DB.prepare(
+    'SELECT endpoint_hash, endpoint, p256dh, auth FROM web_push_subscriptions'
+  ).all();
+  await Promise.all(results.map(async row => {
+    try {
+      await webpush.sendNotification({
+        endpoint: row.endpoint,
+        keys: { p256dh: row.p256dh, auth: row.auth }
+      }, JSON.stringify(payload), { TTL: 86400 });
+    } catch (error) {
+      const statusCode = Number(error?.statusCode || 0);
+      if (statusCode === 404 || statusCode === 410) {
+        await env.DB.prepare('DELETE FROM web_push_subscriptions WHERE endpoint_hash = ?')
+          .bind(row.endpoint_hash).run();
+      } else {
+        console.error('Web Push delivery failed', statusCode, error?.message || error);
+      }
+    }
+  }));
 }
 
 function contentUnlockTimestamp(item, manifest) {

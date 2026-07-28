@@ -3,6 +3,7 @@
   "short_name": "Casa Nostra",
   "description": "Un posto che continua a vivere con noi.",
   "lang": "it",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
