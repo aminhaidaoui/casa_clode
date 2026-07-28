@@ -72,6 +72,10 @@ export default {
       return json({ ok: true });
     }
     return new Response('Not found', { status: 404 });
+  },
+
+  async scheduled(controller, env, ctx) {
+    ctx.waitUntil(notifyUnlockedContent(env, controller.scheduledTime || Date.now()));
   }
 };
 
@@ -80,6 +84,7 @@ async function handleUpdate(update, env) {
   const callback = update.callback_query;
   const chatId = String(message?.chat?.id || callback?.message?.chat?.id || '');
   const command = String(message?.text || callback?.data || '').slice(0, 80);
+  const text = (message?.text || '').trim();
   const authorized = Boolean(chatId && safeEqual(chatId, adminChatId(env)));
   try {
     await env.DB.prepare(`INSERT INTO webhook_diagnostics (id, chat_id, kind, command, authorized, received_at)
@@ -90,9 +95,25 @@ async function handleUpdate(update, env) {
   } catch (error) {
     console.error('Unable to record Telegram diagnostic', error);
   }
+
+  if (callback && callback.data === 'notify:on') {
+    await telegram(env, 'answerCallbackQuery', { callback_query_id: callback.id });
+    return subscribeNotifications(chatId, env);
+  }
+  if (callback && callback.data === 'notify:off') {
+    await telegram(env, 'answerCallbackQuery', { callback_query_id: callback.id });
+    return unsubscribeNotifications(chatId, env);
+  }
+  if (callback && callback.data === 'notify:menu') {
+    await telegram(env, 'answerCallbackQuery', { callback_query_id: callback.id });
+    return showNotificationMenu(chatId, env);
+  }
+  if (text === '/notifiche') return subscribeNotifications(chatId, env);
+  if (text === '/stopnotifiche') return unsubscribeNotifications(chatId, env);
+
   if (!authorized) {
     if (command === '/start' || command === '/menu') {
-      await sendTelegram(env, '⚠️ Ho ricevuto il comando, ma Telegram usa un identificativo diverso. Sto completando il collegamento sicuro.');
+      return showNotificationMenu(chatId, env);
     }
     return;
   }
@@ -102,7 +123,6 @@ async function handleUpdate(update, env) {
     return handleCallback(chatId, callback.data || '', env);
   }
 
-  const text = (message?.text || '').trim();
   if (text === '/start' || text === '/menu') return showMenu(chatId, env);
   if (text === '/annulla') {
     await clearState(chatId, env);
@@ -234,6 +254,7 @@ async function publishDraft(chatId, env) {
   collection.sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
   await writeManifest(manifest, env);
   await clearState(chatId, env);
+  await notifySubscribers(env, `💌 C'è un nuovo aggiornamento a Casa Nostra.\nUn pensiero è stato preparato per ${draft.date} alle ${draft.time}.\n\n${siteUrl(env)}`);
   await send(chatId, `✅ Programmato!\n${draft.date} alle ${draft.time} · ${draft.title}`, env);
   return showMenu(chatId, env);
 }
@@ -285,9 +306,122 @@ async function showMenu(chatId, env, prefix = '') {
     inline_keyboard: [
       [{ text: '☀️ Buongiorno', callback_data: 'new:morning' }, { text: '🌙 Buonanotte', callback_data: 'new:night' }],
       [{ text: '✨ Sorpresa', callback_data: 'new:surprise' }],
-      [{ text: '📅 Calendario', callback_data: 'calendar' }]
+      [{ text: '📅 Calendario', callback_data: 'calendar' }],
+      [{ text: '🔔 Notifiche sul telefono', callback_data: 'notify:menu' }]
     ]
   });
+}
+
+async function showNotificationMenu(chatId, env, prefix = '') {
+  const row = await env.DB.prepare('SELECT active FROM notification_subscribers WHERE chat_id = ?').bind(chatId).first();
+  const active = row?.active === 1;
+  const status = active
+    ? 'Le notifiche sono attive. Ti avviserò quando si apre qualcosa di nuovo.'
+    : 'Attiva le notifiche per sapere quando si sblocca un pensiero o arriva un aggiornamento.';
+  return send(chatId, `${prefix ? `${prefix}\n\n` : ''}🔔 Notifiche di Casa Nostra\n${status}`, env, {
+    inline_keyboard: [[
+      active
+        ? { text: '🔕 Disattiva notifiche', callback_data: 'notify:off' }
+        : { text: '🔔 Attiva notifiche', callback_data: 'notify:on' }
+    ]]
+  });
+}
+
+async function subscribeNotifications(chatId, env) {
+  if (!chatId) return;
+  await env.DB.prepare(`INSERT INTO notification_subscribers (chat_id, active, subscribed_at, updated_at)
+    VALUES (?, 1, datetime('now'), datetime('now'))
+    ON CONFLICT(chat_id) DO UPDATE SET active = 1, updated_at = datetime('now')`)
+    .bind(chatId).run();
+  return showNotificationMenu(chatId, env, 'Notifiche attivate 💗');
+}
+
+async function unsubscribeNotifications(chatId, env) {
+  if (!chatId) return;
+  await env.DB.prepare(`UPDATE notification_subscribers
+    SET active = 0, updated_at = datetime('now') WHERE chat_id = ?`)
+    .bind(chatId).run();
+  return showNotificationMenu(chatId, env, 'Notifiche disattivate.');
+}
+
+async function notifySubscribers(env, text) {
+  const { results = [] } = await env.DB.prepare(
+    'SELECT chat_id FROM notification_subscribers WHERE active = 1'
+  ).all();
+  await Promise.all(results.map(async ({ chat_id: chatId }) => {
+    try {
+      const result = await send(String(chatId), text, env);
+      if (!result?.ok) console.error('Unable to notify subscriber', chatId, result?.description);
+    } catch (error) {
+      console.error('Unable to notify subscriber', chatId, error);
+    }
+  }));
+}
+
+async function notifyUnlockedContent(env, scheduledTime) {
+  const manifest = await readManifest(env);
+  const now = Number(scheduledTime || Date.now());
+  const recentWindow = 10 * 60 * 1000;
+  const all = [...manifest.messages, ...manifest.surprises];
+
+  for (const item of all) {
+    const unlock = contentUnlockTimestamp(item, manifest);
+    if (now < unlock || now - unlock > recentWindow) continue;
+    const contentId = item.id || `${item.date}-${item.kind}-${item.time || ''}`;
+    const stored = await env.DB.prepare(
+      'INSERT OR IGNORE INTO notification_deliveries (content_id, delivered_at) VALUES (?, datetime(\'now\'))'
+    ).bind(contentId).run();
+    if (!stored.meta?.changes) continue;
+
+    const messages = {
+      morning: '☀️ Il buongiorno si è appena sbloccato',
+      night: '🌙 La buonanotte si è appena sbloccata',
+      surprise: '✨ Una sorpresa si è appena sbloccata'
+    };
+    const opening = messages[item.kind] || '💌 Un nuovo pensiero si è appena sbloccato';
+    await notifySubscribers(
+      env,
+      `${opening} a Casa Nostra.\nÈ qui che ti aspetta 💗\n\n${siteUrl(env)}`
+    );
+  }
+}
+
+function contentUnlockTimestamp(item, manifest) {
+  const time = item.time || (item.kind === 'night'
+    ? manifest.nightTime
+    : item.kind === 'morning' ? manifest.morningTime : '00:00');
+  const [year, month, day] = item.date.split('-').map(Number);
+  const [hour, minute] = time.split(':').map(Number);
+  const target = Date.UTC(year, month - 1, day, hour, minute, 0);
+  let guess = target;
+  for (let pass = 0; pass < 3; pass += 1) {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en', {
+      timeZone: manifest.timezone || 'Europe/Rome',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23'
+    }).formatToParts(new Date(guess))
+      .filter(part => part.type !== 'literal')
+      .map(part => [part.type, part.value]));
+    const shown = Date.UTC(
+      Number(parts.year),
+      Number(parts.month) - 1,
+      Number(parts.day),
+      Number(parts.hour),
+      Number(parts.minute),
+      Number(parts.second)
+    );
+    guess += target - shown;
+  }
+  return guess;
+}
+
+function siteUrl(env) {
+  return String(env.PUBLIC_SITE_URL || 'https://aminhaidaoui.github.io/casa_clode/#pensieriDiOggi');
 }
 
 async function send(chatId, text, env, replyMarkup) {

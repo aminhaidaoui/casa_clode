@@ -28,3 +28,18 @@ Vanno salvati con `wrangler secret put`.
 
 Il Worker conserva manifest, bozze e allegati nel namespace KV. Soltanto `ADMIN_CHAT_ID`
 può aprire il pannello; gli altri aggiornamenti Telegram vengono ignorati.
+
+## Notifiche sul telefono
+
+Il Worker controlla ogni minuto il calendario e invia una notifica Telegram quando
+si sblocca un buongiorno, una buonanotte o una sorpresa. Invia inoltre un avviso
+quando dal pannello viene programmato un nuovo contenuto.
+
+Per attivarle sul proprio telefono:
+
+1. aprire il bot Telegram e premere **Avvia**;
+2. premere **Attiva notifiche**, oppure inviare `/notifiche`;
+3. per disattivarle, usare `/stopnotifiche`.
+
+Gli iscritti alle notifiche non possono accedere al pannello di amministrazione.
+Prima del deploy applicare anche la migrazione D1 `0003_phone_notifications.sql`.

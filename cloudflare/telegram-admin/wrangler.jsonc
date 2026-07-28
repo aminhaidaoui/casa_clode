@@ -8,7 +8,11 @@
   },
   "vars": {
     "PUBLIC_SITE_ORIGIN": "https://aminhaidaoui.github.io",
-    "PUBLIC_BASE_URL": "https://casa-nostra-telegram.aminhaidaoui1.workers.dev"
+    "PUBLIC_BASE_URL": "https://casa-nostra-telegram.aminhaidaoui1.workers.dev",
+    "PUBLIC_SITE_URL": "https://aminhaidaoui.github.io/casa_clode/#pensieriDiOggi"
+  },
+  "triggers": {
+    "crons": ["* * * * *"]
   },
   "kv_namespaces": [
     {
