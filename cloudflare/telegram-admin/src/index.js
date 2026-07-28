@@ -193,10 +193,15 @@ async function continueWizard(chatId, message, state, env) {
     if (!text || text.length > 120) return send(chatId, 'Inserisci un titolo tra 1 e 120 caratteri.', env);
     draft.title = text;
     await writeState(chatId, { step: 'note', draft }, env);
-    return send(chatId, '💌 Scrivi il pensiero o la letterina. Puoi anche scrivere /salta.', env);
+    return send(chatId, '💌 Scrivi la breve introduzione che apparirà prima della foto o del video. Puoi anche scrivere /salta.', env);
   }
   if (state.step === 'note') {
     draft.note = text === '/salta' ? '' : text.slice(0, 4000);
+    await writeState(chatId, { step: 'letter', draft }, env);
+    return send(chatId, '✉️ Ora incolla la lettera completa. Sul sito apparirà in un foglio separato e scorrevole.\nSe non vuoi aggiungere una lettera, scrivi /salta.', env);
+  }
+  if (state.step === 'letter') {
+    draft.letter = text === '/salta' ? '' : text.slice(0, 8000);
     await writeState(chatId, { step: 'media', draft }, env);
     return send(chatId, '🎬 Invia ora il video o la foto.\nPer una sorpresa composta soltanto da testo puoi scrivere /salta.', env);
   }
@@ -241,7 +246,8 @@ async function storeTelegramFile(file, draft, env) {
 async function showPreview(chatId, draft, env) {
   const labels = { morning: '☀️ Buongiorno', night: '🌙 Buonanotte', surprise: '✨ Sorpresa' };
   const media = draft.media ? `\nAllegato: ${draft.media.type}` : '\nSenza allegato';
-  return send(chatId, `${labels[draft.kind]}\n📅 ${draft.date} alle ${draft.time} (ora italiana)\n\n${draft.title}\n${draft.note || ''}${media}\n\nVuoi programmarlo?`, env, {
+  const letter = draft.letter ? `\nLettera: presente (${draft.letter.length} caratteri)` : '\nSenza lettera';
+  return send(chatId, `${labels[draft.kind]}\n📅 ${draft.date} alle ${draft.time} (ora italiana)\n\n${draft.title}\n${draft.note || ''}${letter}${media}\n\nVuoi programmarlo?`, env, {
     inline_keyboard: [[
       { text: '✅ Programma', callback_data: 'draft:publish' },
       { text: '❌ Annulla', callback_data: 'draft:cancel' }
@@ -256,6 +262,7 @@ async function publishDraft(chatId, env) {
   const manifest = await readManifest(env);
   const id = `${draft.date}-${draft.kind}-${crypto.randomUUID().slice(0, 6)}`;
   const item = { id, date: draft.date, time: draft.time, kind: draft.kind, title: draft.title, note: draft.note };
+  if (draft.letter) item.letter = draft.letter;
   if (draft.media) {
     if (draft.media.type === 'video') item.video = draft.media.url;
     else item.image = draft.media.url;

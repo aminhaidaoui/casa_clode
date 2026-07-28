@@ -40,6 +40,8 @@ check(html.includes("fetch('./daily-messages.json',{cache:'no-store'})"), 'calen
 check(html.includes("if(!isOpen){element.className='daily-moment is-locked'"), 'video futuro bloccato prima dell orario');
 check(html.includes('setupLetterCarousel()'), 'lettera orizzontale attivata');
 check(html.includes('scroll-snap-type:x mandatory'), 'scorrimento lettera ottimizzato per telefono');
+check(html.includes('telegram-surprise-letter'), 'lettera separata nelle sorprese');
+check(html.includes('item.letter'), 'campo lettera delle sorprese visualizzato');
 
 for (const message of config.messages) {
   check(fs.existsSync(path.join(root, message.video)), `${message.id} video presente`);
