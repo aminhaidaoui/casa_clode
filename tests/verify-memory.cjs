@@ -43,7 +43,8 @@ check(html.includes("return 'È tardi, resta qui un momento.'"), 'messaggio sera
 check(html.includes("showToast('Questa voce resta con te. ♡')"), 'conferma poetica dei preferiti presente');
 check(html.includes("playerShell?.classList.add('is-playing')"), 'audio attivo evidenziato');
 check(html.includes("window.scrollY>700"), 'pulsante torna all inizio presente');
-check(html.includes('for(const x of intros)') && !html.includes('const introSequence=returningHome?'), 'introduzione completa anche per chi ritorna');
+check(html.includes('function freshIntro()') && html.includes('casaNostraIntroDeckV2'), 'introduzione diversa a ogni apertura');
+check(html.includes("setTimeout(()=>enterButton.classList.add('on'),160)") && html.includes("setTimeout(()=>introEl?.remove(),430)"), 'introduzione rapida');
 check(html.includes('function rememberPosition(audio)'), 'posizione audio ricordata');
 check(html.includes('resumePosition&&audio'), 'ripresa audio dal punto salvato');
 check(html.includes("pendingWorker.postMessage({type:'SKIP_WAITING'})"), 'aggiornamento app controllato');
