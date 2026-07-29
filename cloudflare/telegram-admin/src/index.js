@@ -30,9 +30,14 @@ export default {
     if (url.pathname.startsWith('/media/') && request.method === 'GET') {
       return serveMedia(url.pathname.slice('/media/'.length), env);
     }
-    if (url.pathname === '/notify-entry' && request.method === 'POST') {
-      ctx.waitUntil(sendTelegram(env, `💌 Qualcuno è entrato a Casa Nostra\n${romeNow()}`));
-      return cors(json({ ok: true }), env);
+    if ((url.pathname === '/notify-activity' || url.pathname === '/notify-entry') && request.method === 'POST') {
+      if (!isPublicSiteRequest(request, env)) {
+        return cors(json({ ok: false, error: 'Origin not allowed' }, { status: 403 }), env);
+      }
+      const payload = url.pathname === '/notify-entry'
+        ? { event: 'enter' }
+        : await request.json().catch(() => ({}));
+      return cors(await notifyActivity(payload, env, ctx), env);
     }
     if (url.pathname === '/admin/setup-webhook' && request.method === 'POST') {
       if (!safeEqual(request.headers.get('X-Casa-Setup'), env.SETUP_SECRET)) {
@@ -567,6 +572,50 @@ async function sendTelegram(env, text) {
   return send(adminChatId(env), text, env);
 }
 
+async function notifyActivity(payload, env, ctx) {
+  const event = String(payload?.event || '').trim();
+  const detail = String(payload?.detail || '').trim().toLowerCase();
+  const months = new Set(['febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio']);
+  const dailyKinds = new Set(['buongiorno', 'buonanotte']);
+  const videoKinds = new Set(['ricordo', 'buongiorno', 'buonanotte', 'sorpresa']);
+  let key = event;
+  let message = '';
+  let cooldown = 20;
+
+  if (event === 'enter') {
+    message = '🏠 Qualcuno è entrato a Casa Nostra';
+    cooldown = 60;
+  } else if (event === 'galaxy_open' && months.has(detail)) {
+    key += `:${detail}`;
+    message = `🌌 È stata aperta la galassia di ${detail}`;
+  } else if (event === 'daily_open' && dailyKinds.has(detail)) {
+    key += `:${detail}`;
+    message = `💌 È stato aperto il ${detail}`;
+  } else if (event === 'surprise_open') {
+    message = '✨ È stata aperta una sorpresa';
+  } else if (event === 'letter_open') {
+    message = '✉️ È stata aperta una lettera';
+  } else if (event === 'video_play' && videoKinds.has(detail)) {
+    key += `:${detail}`;
+    message = `🎬 È partito un video · ${detail}`;
+  } else if (event === 'game_complete') {
+    message = '🎮 È stato completato un gioco di Casa Nostra';
+  } else {
+    return json({ ok: false, error: 'Unknown activity' }, { status: 400 });
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const result = await env.DB.prepare(`INSERT INTO activity_notification_throttle (throttle_key, last_sent_at)
+    VALUES (?, ?)
+    ON CONFLICT(throttle_key) DO UPDATE SET last_sent_at = excluded.last_sent_at
+    WHERE excluded.last_sent_at - activity_notification_throttle.last_sent_at >= ?`)
+    .bind(key, now, cooldown).run();
+  if (!result.meta?.changes) return json({ ok: true, skipped: 'throttled' });
+
+  ctx.waitUntil(sendTelegram(env, `${message}\n🕰️ ${romeNow()}`));
+  return json({ ok: true, sent: true });
+}
+
 async function telegram(env, method, body) {
   const response = await fetch(`https://api.telegram.org/bot${botToken(env)}/${method}`, {
     method: 'POST',
@@ -630,6 +679,12 @@ function cors(response, env) {
   headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   headers.set('Access-Control-Allow-Headers', 'Content-Type');
   return new Response(response.body, { status: response.status, headers });
+}
+
+function isPublicSiteRequest(request, env) {
+  const allowed = String(env.PUBLIC_SITE_ORIGIN || '').replace(/\/+$/, '');
+  const origin = String(request.headers.get('Origin') || '').replace(/\/+$/, '');
+  return Boolean(allowed && origin && origin === allowed);
 }
 
 function json(value, init = {}) {
