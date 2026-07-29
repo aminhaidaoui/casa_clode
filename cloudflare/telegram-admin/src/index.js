@@ -578,6 +578,20 @@ async function notifyActivity(payload, env, ctx) {
   const months = new Set(['febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio']);
   const dailyKinds = new Set(['buongiorno', 'buonanotte']);
   const videoKinds = new Set(['ricordo', 'buongiorno', 'buonanotte', 'sorpresa']);
+  const moods = new Map([
+    ['bene', 'sta bene'],
+    ['felice', 'è felice'],
+    ['triste', 'è triste'],
+    ['incazzata', 'è arrabbiata'],
+    ['conme', 'è arrabbiata con te'],
+    ['nostalgica', 'ha nostalgia'],
+    ['ansiosa', 'si sente in ansia'],
+    ['coccole', 'vorrebbe le coccole']
+  ]);
+  const audioCategories = new Set([
+    'ansia', 'coccole', 'cosi', 'felice', 'incazzata',
+    'mi-sento-sola', 'motivazione', 'nostalgia', 'sto-bene', 'triste'
+  ]);
   let key = event;
   let message = '';
   let cooldown = 20;
@@ -598,6 +612,12 @@ async function notifyActivity(payload, env, ctx) {
   } else if (event === 'video_play' && videoKinds.has(detail)) {
     key += `:${detail}`;
     message = `🎬 È partito un video · ${detail}`;
+  } else if (event === 'mood_select' && moods.has(detail)) {
+    key += `:${detail}`;
+    message = `💭 Oggi ha scelto: ${moods.get(detail)}`;
+  } else if (event === 'audio_play' && audioCategories.has(detail)) {
+    key += `:${detail}`;
+    message = `🎧 Ha avviato una voce della stanza · ${detail.replaceAll('-', ' ')}`;
   } else if (event === 'game_complete') {
     message = '🎮 È stato completato un gioco di Casa Nostra';
   } else {

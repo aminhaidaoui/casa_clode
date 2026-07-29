@@ -10,14 +10,16 @@ assert(html.includes("notifyCasaActivity('enter')"), 'Entry must be reported');
 assert(html.includes("'galaxy_open'"), 'Galaxy opens must be reported');
 assert(html.includes("'letter_open'"), 'Letter opens must be reported');
 assert(html.includes("'video_play'"), 'Video starts must be reported');
-assert(!html.includes("notifyCasaActivity('mood"), 'Mood choices must remain private');
-assert(!html.includes("notifyCasaActivity('audio"), 'Audio choices must remain private');
-assert(html.includes('Quello che senti e gli audio che scegli restano privati'), 'The privacy note must be visible');
+assert(html.includes("notifyCasaActivity('mood_select'"), 'Mood choices must be reported');
+assert(html.includes("notifyCasaActivity('audio_play'"), 'Audio starts must be reported');
+assert(html.includes('Non invia la tua posizione'), 'The privacy note must explain what is not sent');
 
 assert(worker.includes("url.pathname === '/notify-activity'"), 'Worker endpoint is missing');
 assert(worker.includes('isPublicSiteRequest'), 'Origin validation is missing');
 assert(worker.includes('activity_notification_throttle'), 'Server throttle is missing');
 assert(worker.includes("event === 'galaxy_open' && months.has(detail)"), 'Galaxy details must be allow-listed');
+assert(worker.includes("event === 'mood_select' && moods.has(detail)"), 'Mood details must be allow-listed');
+assert(worker.includes("event === 'audio_play' && audioCategories.has(detail)"), 'Audio categories must be allow-listed');
 assert(migration.includes('CREATE TABLE IF NOT EXISTS activity_notification_throttle'), 'Throttle migration is missing');
 
 for (const source of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)) {
