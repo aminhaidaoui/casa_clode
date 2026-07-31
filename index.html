@@ -738,6 +738,7 @@ window.CASA_NOSTRA_FULL_MEDIA.luglio.splice(10,0,
 .open-surprise-button{align-self:center;margin-top:18px;padding:12px 18px;border:1px solid var(--line);border-radius:999px;background:var(--cherry);color:#fff;cursor:pointer;font:italic 1rem Georgia,serif;box-shadow:0 12px 30px rgba(100,48,68,.16)}.surprise-popup{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:clamp(12px,3vw,30px);background:rgba(8,5,10,.82);backdrop-filter:blur(12px)}.surprise-popup.hidden{display:none}.surprise-popup-card{position:relative;width:min(820px,100%);max-height:92dvh;overflow-y:auto;padding:clamp(26px,5vw,52px);border:1px solid rgba(255,255,255,.22);border-radius:30px;background:linear-gradient(145deg,var(--paper),var(--blush));color:var(--ink);box-shadow:0 30px 100px rgba(0,0,0,.42);text-align:center;overscroll-behavior:contain}.surprise-popup-close{position:sticky;top:0;float:right;z-index:4;width:42px;height:42px;margin:-10px -10px 4px 12px;border:1px solid var(--line);border-radius:50%;background:var(--paper);color:var(--ink);cursor:pointer;font-size:1.4rem}.surprise-popup-content img,.surprise-popup-content video{display:block;width:100%;max-height:62dvh;object-fit:contain;margin-top:20px;border-radius:20px;background:#111}.surprise-popup-content h3{margin:.25em 0;font-size:clamp(2rem,5vw,3.6rem)}.surprise-popup .telegram-surprise-letter{max-height:min(58dvh,620px)}
 .telegram-surprise-letter{width:100%;max-height:min(68dvh,720px);margin-top:22px;padding:clamp(22px,5vw,42px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid var(--line);border-radius:22px;background:rgba(255,250,246,.78);box-shadow:inset 0 1px #fff9;text-align:left;white-space:pre-line;line-height:1.72;scrollbar-color:var(--rose) transparent}.telegram-surprise-letter .ey{position:sticky;top:-22px;margin:-22px -22px 18px;padding:18px 22px 12px;background:linear-gradient(var(--paper) 75%,transparent);z-index:1}.telegram-surprise-letter-text{font:clamp(1rem,2.5vw,1.13rem)/1.75 Georgia,serif;color:var(--ink)}
 .activity-privacy{max-width:720px;margin:26px auto 10px;padding:15px 20px;border:1px solid var(--line);border-radius:18px;color:var(--muted);font-size:.72rem;line-height:1.55;text-align:center;background:rgba(255,250,246,.45)}
+.return-countdown{position:relative;overflow:hidden;padding-top:72px;padding-bottom:72px;text-align:center;background:radial-gradient(circle at 50% 0,rgba(219,140,162,.25),transparent 42%),linear-gradient(145deg,var(--paper),var(--blush))}.return-countdown:before{content:'✦';position:absolute;left:8%;top:16%;color:var(--rose);font-size:2.2rem;opacity:.35}.return-countdown:after{content:'♡';position:absolute;right:8%;bottom:14%;color:var(--cherry);font-size:2.5rem;opacity:.28}.return-countdown-copy{position:relative;z-index:1;width:min(820px,100%);margin:auto}.return-countdown h2{margin:.2em 0;font-size:clamp(2.4rem,7vw,5.5rem)}.return-countdown-phrase{width:min(680px,100%);margin:14px auto 26px;color:var(--muted);font:italic clamp(1.05rem,2.5vw,1.4rem)/1.6 Georgia,serif}.return-clock{display:grid;grid-template-columns:repeat(4,minmax(74px,130px));justify-content:center;gap:10px;margin:24px auto}.return-clock .return-unit{padding:17px 10px;border:1px solid var(--line);border-radius:20px;background:rgba(255,250,246,.72);box-shadow:0 12px 34px rgba(75,43,59,.08)}.return-clock b{display:block;color:var(--cherry);font:400 clamp(1.7rem,5vw,3rem)/1 Georgia,serif}.return-clock span{display:block;margin-top:7px;color:var(--muted);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase}.return-date{color:var(--cherry);font:.8rem/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}.return-countdown.has-arrived .return-clock{display:none}.return-countdown.has-arrived .return-countdown-phrase{font-size:clamp(1.3rem,4vw,2rem);color:var(--cherry)}
 body.cn-night{--bg:#100d14;--paper:#1b1520;--blush:#281b26;--ink:#f7ecef;--muted:#d5c2ca;--cherry:#eba9ba;--rose:#d98ca0;--line:rgba(255,255,255,.16);background:radial-gradient(circle at 50% 0,#342035,#100d14 58%)!important;color:var(--ink)}
 body.cn-night::before{background:linear-gradient(120deg,rgba(235,169,186,.09),transparent 38%,rgba(102,126,164,.09))!important}
 body.cn-night main>section:not(.cosmos-shell),body.cn-night section.story-section,body.cn-night section[class*="story"]{background-color:rgba(16,13,20,.76)!important}
@@ -755,11 +756,12 @@ body.cn-night .voice-player-shell,body.cn-night .daily-voice-card,body.cn-night 
 body.cn-night .telegram-surprise-letter{background:linear-gradient(145deg,#1b1520,#281b26);color:var(--ink);border-color:var(--line);box-shadow:none}
 body.cn-night .surprise-popup-card{background:linear-gradient(145deg,#1b1520,#281b26);color:var(--ink)}
 body.cn-night .activity-privacy{background:rgba(27,21,32,.74)}
+body.cn-night .return-countdown{background:radial-gradient(circle at 50% 0,rgba(219,140,162,.16),transparent 42%),linear-gradient(145deg,#16101a,#291b28)}body.cn-night .return-clock .return-unit{background:rgba(38,29,42,.9)}
 body.cn-night .daily-moment,body.cn-night .daily-archive{background:linear-gradient(145deg,#1b1520,#281b26);color:var(--ink)}body.cn-night .daily-archive-list button,body.cn-night .content-archive-toggle{background:#211923;color:var(--ink)}body.cn-night .content-seen-badge{background:rgba(72,170,108,.16);color:#82d29f}
 body.cn-night .heroimg,body.cn-night .ph{filter:brightness(.68) saturate(.8)}body.cn-night footer{background:#1b1520;color:var(--ink)}
 @media(max-width:800px){.voice-categories{grid-template-columns:repeat(2,1fr)}.voice-memory-note{align-items:flex-start;flex-direction:column}.cn-welcome{top:14px}.voice-category{min-height:94px}}
 @media(max-width:560px){.voice-tools{display:grid;grid-template-columns:repeat(2,1fr)}.voice-tool{min-height:66px}.favorites-list{grid-template-columns:1fr}}
-@media(max-width:720px){.daily-moment-grid,.telegram-surprise-list,.daily-archive-list{grid-template-columns:1fr}.daily-moment{min-height:250px}}
+@media(max-width:720px){.daily-moment-grid,.telegram-surprise-list,.daily-archive-list{grid-template-columns:1fr}.daily-moment{min-height:250px}.return-clock{grid-template-columns:repeat(2,minmax(92px,130px))}}
 @media(prefers-reduced-motion:reduce){.cn-welcome,.casa-toast,.back-to-top,.voice-category{transition:none}}
 </style>
 
@@ -837,12 +839,51 @@ body.cn-night .heroimg,body.cn-night .ph{filter:brightness(.68) saturate(.8)}bod
 <div class="box"><b id="v21d">--</b><span>giorni</span></div><div class="box"><b id="v21h">--</b><span>ore</span></div>
 <div class="box"><b id="v21m">--</b><span>minuti</span></div><div class="box"><b id="v21s">--</b><span>secondi</span></div></div>🔒</div><p class="muted">si aprirà quando arriverà il suo momento</p><p id="roomCountdown" class="countdown"></p></div></div></section>
 
+<section class="section return-countdown" id="ritornoDalMarocco" aria-live="polite">
+ <div class="return-countdown-copy">
+  <p class="ey">la distanza sta per finire</p>
+  <h2 id="returnCountdownTitle">sto tornando<br><span class="accent">da te.</span></h2>
+  <p id="returnCountdownPhrase" class="return-countdown-phrase">Il Marocco mi ha portato lontano. Ma il 25 agosto, alle 18:45, ogni chilometro smetterà di separarci.</p>
+  <div id="returnClock" class="return-clock" aria-label="Conto alla rovescia fino al ritorno">
+   <div class="return-unit"><b id="returnDays">--</b><span>giorni</span></div>
+   <div class="return-unit"><b id="returnHours">--</b><span>ore</span></div>
+   <div class="return-unit"><b id="returnMinutes">--</b><span>minuti</span></div>
+   <div class="return-unit"><b id="returnSeconds">--</b><span>secondi</span></div>
+  </div>
+  <p class="return-date">25 agosto 2026 · 18:45 · ora italiana</p>
+ </div>
+</section>
+
 <p class="activity-privacy">Casa Nostra può mandare ad Amin un piccolo avviso quando entri, scegli come ti senti o apri una galassia, una lettera, un audio o un video. Non invia la tua posizione, il contenuto delle lettere né le registrazioni.</p>
 <footer>questa pagina non finisce qui · cresce con noi<br><b>amin ♡ camilla</b></footer>
 </main>
 <div id="warp" class="warp hidden"></div>
 <div id="monthWorld" class="month-world hidden"><div class="world-head"><p class="ey">sistema di ricordi</p><h2 id="worldTitle"></h2></div><button id="backSpace" class="back-space">← torna alle galassie</button><div id="memorySky" class="memory-sky"></div></div>
 <div id="modal" class="modal hidden"><div class="card"><button id="close" class="close">×</button><div id="mediaMount"><img id="mi"></div><p id="mc" class="muted"></p></div></div>
+<script>
+(()=>{
+ const section=document.getElementById('ritornoDalMarocco');
+ if(!section)return;
+ const target=Date.UTC(2026,7,25,16,45,0);
+ const fields={days:document.getElementById('returnDays'),hours:document.getElementById('returnHours'),minutes:document.getElementById('returnMinutes'),seconds:document.getElementById('returnSeconds')};
+ function updateReturnCountdown(){
+  const distance=target-Date.now();
+  if(distance<=0){
+   section.classList.add('has-arrived');
+   document.getElementById('returnCountdownTitle').innerHTML='sono tornato.<br><span class="accent">ora torno da te.</span>';
+   document.getElementById('returnCountdownPhrase').textContent='La distanza ha finito il suo lavoro. Adesso manca soltanto il nostro abbraccio.';
+   return;
+  }
+  const total=Math.floor(distance/1000);
+  fields.days.textContent=String(Math.floor(total/86400));
+  fields.hours.textContent=String(Math.floor(total%86400/3600)).padStart(2,'0');
+  fields.minutes.textContent=String(Math.floor(total%3600/60)).padStart(2,'0');
+  fields.seconds.textContent=String(total%60).padStart(2,'0');
+ }
+ updateReturnCountdown();setInterval(updateReturnCountdown,1000);
+})();
+</script>
+
 <script>
 const $=s=>document.querySelector(s),sleep=m=>new Promise(r=>setTimeout(r,m));
 const introEl=$('#intro'),introTextEl=$('#it'),introKickerEl=$('#introKicker'),enterButton=$('#enter');
