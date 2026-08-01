@@ -278,12 +278,12 @@ async function publishDraft(chatId, env) {
   await writeManifest(manifest, env);
   await clearState(chatId, env);
   await Promise.all([
-    notifySubscribers(env, `💌 C'è un nuovo aggiornamento a Casa Nostra.\nUn pensiero è stato preparato per ${draft.date} alle ${draft.time}.\n\n${siteUrl(env)}`),
+    notifySubscribers(env, `💌 C'è un nuovo aggiornamento a Casa Nostra.\nUn pensiero è stato preparato per ${draft.date} alle ${draft.time}.\n\n${siteUrl(env, draft.kind)}`),
     notifyWebPush(env, {
       title: 'Casa Nostra si è aggiornata 💌',
       body: 'C’è un nuovo pensiero che ti aspetterà al momento giusto.',
       tag: `update-${id}`,
-      url: siteUrl(env)
+      url: siteUrl(env, draft.kind)
     })
   ]);
   await send(chatId, `✅ Programmato!\n${draft.date} alle ${draft.time} · ${draft.title}`, env);
@@ -477,13 +477,13 @@ async function notifyUnlockedContent(env, scheduledTime) {
     await Promise.all([
       notifySubscribers(
         env,
-        `${opening} a Casa Nostra.\nÈ qui che ti aspetta 💗\n\n${siteUrl(env)}`
+        `${opening} a Casa Nostra.\nÈ qui che ti aspetta 💗\n\n${siteUrl(env, item.kind)}`
       ),
       notifyWebPush(env, {
         title: 'Casa Nostra 💗',
         body: `${opening}. È qui che ti aspetta.`,
         tag: `unlock-${contentId}`,
-        url: siteUrl(env)
+        url: siteUrl(env, item.kind)
       })
     ]);
   }
@@ -554,8 +554,11 @@ function contentUnlockTimestamp(item, manifest) {
   return guess;
 }
 
-function siteUrl(env) {
-  return String(env.PUBLIC_SITE_URL || 'https://aminhaidaoui.github.io/casa_clode/#pensieriDiOggi');
+function siteUrl(env, kind = '') {
+  const configured = String(env.PUBLIC_SITE_URL || 'https://aminhaidaoui.github.io/casa_clode/');
+  const base = configured.split('#')[0];
+  const anchor = kind === 'surprise' ? 'sorpreseDaLontano' : 'pensieriDiOggi';
+  return `${base}#${anchor}`;
 }
 
 async function send(chatId, text, env, replyMarkup) {

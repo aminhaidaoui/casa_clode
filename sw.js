@@ -1,4 +1,4 @@
-const CACHE_NAME='casa-nostra-v50';
+const CACHE_NAME='casa-nostra-v51';
 const CORE=['./','./index.html','./manifest.webmanifest','./daily-messages.json','./assets/home/IMG_0201.jpg','./assets/app/icon-192.png','./assets/app/icon-512.png'];
 
 self.addEventListener('install',event=>{
