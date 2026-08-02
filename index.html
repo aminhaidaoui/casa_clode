@@ -1368,9 +1368,9 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
  document.addEventListener('play',event=>{const content=event.target.closest?.('[data-content-id]');if(content?.dataset.contentId)markOpened(content.dataset.contentId)},true);
  function tick(){let shouldRender=false;document.querySelectorAll('[data-daily-unlock]').forEach(el=>{const target=Number(el.dataset.dailyUnlock);if(Date.now()>=target)shouldRender=true;else el.textContent=remaining(target)});if(shouldRender)render()}
  async function loadContent(){
-  let localData=defaults,remoteData={};
+  let localData=defaults,remoteData={messages:config.messages||[],surprises:config.surprises||[]};
   try{const local=await fetch('./daily-messages.json',{cache:'no-store'});if(local.ok)localData=await local.json()}catch(error){}
-  try{const remote=await fetch(CONTENT_API,{cache:'no-store'});if(remote.ok)remoteData=await remote.json()}catch(error){}
+  try{const remote=await fetch(`${CONTENT_API}?fresh=${Date.now()}`,{cache:'no-store'});if(remote.ok)remoteData=await remote.json()}catch(error){}
   const mergedMessages=new Map();
   for(const item of [...(Array.isArray(localData.messages)?localData.messages:[]),...(Array.isArray(remoteData.messages)?remoteData.messages:[])])if(item?.id)mergedMessages.set(item.id,item);
   config={...defaults,...localData,...remoteData,messages:[...mergedMessages.values()].filter(item=>item&&item.date&&item.kind&&(item.video||item.image||item.note)),surprises:Array.isArray(remoteData.surprises)?remoteData.surprises.filter(item=>item&&item.date&&item.time):[]};
@@ -1379,9 +1379,21 @@ document.addEventListener('click',e=>{let q=e.target.closest('[class*="lock"],[d
    document.getElementById('sorpreseDaLontano')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
    surpriseList?.querySelector('.open-surprise-button')?.classList.add('needs-attention');
   },120);
-  setInterval(tick,1000);
  }
- loadContent();
+ let lastContentRefresh=0,contentRefreshPromise=null;
+ function refreshContent(force=false){
+  if(contentRefreshPromise)return contentRefreshPromise;
+  const now=Date.now();
+  if(!force&&now-lastContentRefresh<1500)return contentRefreshPromise;
+  lastContentRefresh=now;
+  contentRefreshPromise=loadContent().finally(()=>{contentRefreshPromise=null});
+  return contentRefreshPromise;
+ }
+ refreshContent(true);
+ setInterval(tick,1000);
+ window.addEventListener('pageshow',()=>refreshContent());
+ window.addEventListener('focus',()=>refreshContent());
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshContent()});
 })();
 </script>
 
@@ -2037,13 +2049,16 @@ window.addEventListener('casa-nostra:night-mode',event=>{ambientVolume=event.det
  });
  if('serviceWorker' in navigator)window.addEventListener('load',async()=>{
   try{
-   const registration=await navigator.serviceWorker.register('./sw.js');
+   const registration=await navigator.serviceWorker.register('./sw.js?v=52',{updateViaCache:'none'});
    let pendingWorker=registration.waiting,reloadForUpdate=false;
    const offerUpdate=worker=>{if(!worker)return;pendingWorker=worker;appUpdate?.classList.add('on')};
    if(pendingWorker)offerUpdate(pendingWorker);
    registration.addEventListener('updatefound',()=>{const worker=registration.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)offerUpdate(worker)})});
    applyUpdate?.addEventListener('click',()=>{if(!pendingWorker)return;reloadForUpdate=true;pendingWorker.postMessage({type:'SKIP_WAITING'});appUpdate?.classList.remove('on')});
-   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloadForUpdate)location.reload()});
+   navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(reloadForUpdate)location.reload();
+   });
+   registration.update().catch(()=>{});
   }catch(error){}
  });
 

@@ -50,7 +50,7 @@ check(html.includes('resumePosition&&audio'), 'ripresa audio dal punto salvato')
 check(html.includes("pendingWorker.postMessage({type:'SKIP_WAITING'})"), 'aggiornamento app controllato');
 check(html.includes("img.loading='lazy'"), 'immagini caricate solo quando servono');
 check(html.includes("Questo ricordo oggi non riesce a partire"), 'errore media comunicato con delicatezza');
-check(html.includes("serviceWorker.register('./sw.js')"), 'installazione app abilitata');
+check(html.includes("serviceWorker.register('./sw.js?v=52'"), 'installazione app abilitata');
 check(html.includes("sessionStorage.setItem(SESSION_KEY,'open')"), 'apertura contata una volta per sessione');
 check(html.includes('if(counted.has(audio))return'), 'pausa e ripresa non duplicano l’ascolto');
 check(html.includes('DUCKED_VOLUME=.008'), 'musica ridotta a un sussurro durante gli audio');
