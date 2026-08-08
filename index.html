@@ -2220,3 +2220,62 @@ window.addEventListener('casa-nostra:night-mode',event=>{ambientVolume=event.det
 </script>
 
 </body></html>
+
+<style>
+body.six-month-gift-open{overflow:hidden}
+.six-month-gift{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 18% 14%,rgba(255,255,255,.72),transparent 27%),radial-gradient(circle at 82% 78%,rgba(157,70,87,.24),transparent 34%),linear-gradient(150deg,#fff8f3,#eed9dc 55%,#d9bcc5)}
+.six-month-gift.hidden{display:none}
+.six-month-gift-card{width:min(720px,100%);text-align:center;padding:clamp(30px,6vw,64px) clamp(20px,6vw,58px);border:1px solid rgba(157,70,87,.18);border-radius:34px;background:rgba(255,250,246,.92);box-shadow:0 28px 90px rgba(75,42,55,.2)}
+.six-month-gift-date{margin:0 0 16px;color:#9d4657;font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.six-month-gift h1{margin:.12em 0 .32em;font-size:clamp(2.6rem,9vw,5.8rem);line-height:.95}
+.six-month-gift-copy{margin:0 auto 28px;max-width:490px;color:#675961;font:clamp(1.05rem,2.4vw,1.3rem)/1.55 Georgia,serif}
+.six-month-gift-button,.six-month-continue{border:0;border-radius:999px;padding:16px 24px;background:#9d4657;color:#fff;font-size:1rem;cursor:pointer;box-shadow:0 12px 28px rgba(157,70,87,.25)}
+.six-month-player{display:none;margin-top:24px}.six-month-player.on{display:block}
+.six-month-video{width:min(390px,100%);margin:auto;aspect-ratio:9/16;overflow:hidden;border-radius:24px;background:#130e11}
+.six-month-video iframe{display:block;width:100%;height:100%;border:0}
+.six-month-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:20px}
+.six-month-fallback{color:#9d4657;font-size:.88rem}
+@media(max-width:520px){.six-month-gift{padding:10px}.six-month-gift-card{padding:28px 14px;border-radius:26px}.six-month-video{width:min(76vw,330px);max-height:62svh}}
+</style>
+
+<section id="sixMonthGift" class="six-month-gift hidden">
+  <div class="six-month-gift-card">
+    <p class="six-month-gift-date">9 agosto 2026 · sei mesi di noi</p>
+    <h1>Buon sesto<br><span class="accent">mesiversario</span> ❤️</h1>
+    <p class="six-month-gift-copy">C’è qualcosa che ho preparato per te, con tutti i momenti che ci hanno portati fin qui.</p>
+    <button id="openSixMonthGift" class="six-month-gift-button" type="button">Clicca qui per vedere il tuo regalo</button>
+    <div id="sixMonthPlayer" class="six-month-player">
+      <div id="sixMonthVideo" class="six-month-video"></div>
+      <div class="six-month-actions">
+        <button id="continueAfterSixMonthGift" class="six-month-continue" type="button">entra in Casa Nostra ❤️</button>
+        <a class="six-month-fallback" href="https://youtu.be/r4USZdi6GEE" target="_blank" rel="noopener">se il video non parte, aprilo qui</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const unlockAt=Date.UTC(2026,7,8,22,0,0);
+  const memoryKey='casaNostraSixMonthGiftOpenedV1';
+  const gift=document.querySelector('#sixMonthGift');
+  const open=document.querySelector('#openSixMonthGift');
+  const player=document.querySelector('#sixMonthPlayer');
+  const video=document.querySelector('#sixMonthVideo');
+  const finish=document.querySelector('#continueAfterSixMonthGift');
+  if(!gift || Date.now()<unlockAt || localStorage.getItem(memoryKey)==='true') return;
+  gift.classList.remove('hidden');
+  document.body.classList.add('six-month-gift-open');
+  open.addEventListener('click',()=>{
+    video.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/r4USZdi6GEE?autoplay=1&playsinline=1&rel=0" title="Il nostro sesto mesiversario" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    open.hidden=true;
+    player.classList.add('on');
+    localStorage.setItem(memoryKey,'true');
+  });
+  finish.addEventListener('click',()=>{
+    video.innerHTML='';
+    gift.remove();
+    document.body.classList.remove('six-month-gift-open');
+  });
+})();
+</script>
