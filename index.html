@@ -844,14 +844,14 @@ body.cn-night .heroimg,body.cn-night .ph{filter:brightness(.68) saturate(.8)}bod
  <div class="return-countdown-copy">
   <p class="ey">la distanza sta per finire</p>
   <h2 id="returnCountdownTitle">sto tornando<br><span class="accent">da te.</span></h2>
-  <p id="returnCountdownPhrase" class="return-countdown-phrase">Il Marocco mi ha portato lontano. Ma il 25 agosto, alle 18:45, ogni chilometro smetterà di separarci.</p>
+  <p id="returnCountdownPhrase" class="return-countdown-phrase">Il Marocco mi ha portato lontano. Ma il 26 agosto, alle 18:45, ogni chilometro smetterà di separarci.</p>
   <div id="returnClock" class="return-clock" aria-label="Conto alla rovescia fino al ritorno">
    <div class="return-unit"><b id="returnDays">--</b><span>giorni</span></div>
    <div class="return-unit"><b id="returnHours">--</b><span>ore</span></div>
    <div class="return-unit"><b id="returnMinutes">--</b><span>minuti</span></div>
    <div class="return-unit"><b id="returnSeconds">--</b><span>secondi</span></div>
   </div>
-  <p class="return-date">25 agosto 2026 · 18:45 · ora italiana</p>
+  <p class="return-date">26 agosto 2026 · 18:45 · ora italiana</p>
  </div>
 </section>
 
@@ -865,7 +865,7 @@ body.cn-night .heroimg,body.cn-night .ph{filter:brightness(.68) saturate(.8)}bod
 (()=>{
  const section=document.getElementById('ritornoDalMarocco');
  if(!section)return;
- const target=Date.UTC(2026,7,26,18,45,0);
+ const target=Date.UTC(2026,7,26,16,45,0);
  const fields={days:document.getElementById('returnDays'),hours:document.getElementById('returnHours'),minutes:document.getElementById('returnMinutes'),seconds:document.getElementById('returnSeconds')};
  function updateReturnCountdown(){
   const distance=target-Date.now();
